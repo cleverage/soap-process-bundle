@@ -1,0 +1,3 @@
+services:
+    CleverAge\SoapProcessBundle\Registry\ClientRegistry:
+        public: false
