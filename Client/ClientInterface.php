@@ -61,24 +61,64 @@ interface ClientInterface
     public function setOptions(array $options): void;
 
     /**
-     * @return string
+     * Return the Soap call options
+     *
+     * @see https://www.php.net/manual/en/soapclient.soapcall.php
+     *
+     * @return array|null
      */
-    public function getLastRequest(): string;
+    public function getSoapOptions(): ?array;
+
+    /**
+     * Set the Soap call options
+     *
+     * @see https://www.php.net/manual/en/soapclient.soapcall.php
+     *
+     * @param array|null $options
+     *
+     * @return void
+     */
+    public function setSoapOptions(array $options = null): void;
+
+    /**
+     * Return the Soap call headers
+     *
+     * @see https://www.php.net/manual/en/soapclient.soapcall.php
+     *
+     * @return \SoapHeader[]|null
+     */
+    public function getSoapHeaders(): ?array;
+
+    /**
+     * Set the Soap call headers
+     *
+     * @see https://www.php.net/manual/en/soapclient.soapcall.php
+     *
+     * @param \SoapHeader[]|null $headers
+     *
+     * @return void
+     */
+    public function setSoapHeaders(array $headers = null): void;
 
     /**
      * @return string
      */
-    public function getLastRequestHeaders(): string;
+    public function getLastRequest(): ?string;
 
     /**
      * @return string
      */
-    public function getLastResponse(): string;
+    public function getLastRequestHeaders(): ?string;
 
     /**
      * @return string
      */
-    public function getLastResponseHeaders(): string;
+    public function getLastResponse(): ?string;
+
+    /**
+     * @return string
+     */
+    public function getLastResponseHeaders(): ?string;
 
     /**
      * Call Soap method
