@@ -28,6 +28,12 @@ class Client implements ClientInterface
     /** @var array */
     private $options;
 
+    /** @var array */
+    private $soapOptions;
+
+    /** @var null|\SoapHeader[] */
+    private $soapHeaders;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -116,6 +122,38 @@ class Client implements ClientInterface
     }
 
     /**
+     * @return array|null
+     */
+    public function getSoapOptions(): ?array
+    {
+        return $this->soapOptions;
+    }
+
+    /**
+     * @param array|null $soapOptions
+     */
+    public function setSoapOptions(array $soapOptions = null): void
+    {
+        $this->soapOptions = $soapOptions;
+    }
+
+    /**
+     * @return \SoapHeader[]|null
+     */
+    public function getSoapHeaders(): ?array
+    {
+        return $this->soapHeaders;
+    }
+
+    /**
+     * @param \SoapHeader[]|null $soapHeaders
+     */
+    public function setSoapHeaders(array $soapHeaders = null): void
+    {
+        $this->soapHeaders = $soapHeaders;
+    }
+
+    /**
      * @return \SoapClient|null
      */
     public function getSoapClient(): ?\SoapClient
@@ -134,7 +172,7 @@ class Client implements ClientInterface
     /**
      * @return string
      */
-    public function getLastRequest(): string
+    public function getLastRequest(): ?string
     {
         return $this->lastRequest;
     }
@@ -142,7 +180,7 @@ class Client implements ClientInterface
     /**
      * @param string $lastRequest
      */
-    public function setLastRequest(string $lastRequest): void
+    public function setLastRequest(?string $lastRequest): void
     {
         $this->lastRequest = $lastRequest;
     }
@@ -150,7 +188,7 @@ class Client implements ClientInterface
     /**
      * @return string
      */
-    public function getLastRequestHeaders(): string
+    public function getLastRequestHeaders(): ?string
     {
         return $this->lastRequestHeaders;
     }
@@ -158,7 +196,7 @@ class Client implements ClientInterface
     /**
      * @param string $lastRequestHeaders
      */
-    public function setLastRequestHeaders(string $lastRequestHeaders): void
+    public function setLastRequestHeaders(?string $lastRequestHeaders): void
     {
         $this->lastRequestHeaders = $lastRequestHeaders;
     }
@@ -166,7 +204,7 @@ class Client implements ClientInterface
     /**
      * @return string
      */
-    public function getLastResponse(): string
+    public function getLastResponse(): ?string
     {
         return $this->lastResponse;
     }
@@ -174,7 +212,7 @@ class Client implements ClientInterface
     /**
      * @param string $lastResponse
      */
-    public function setLastResponse(string $lastResponse): void
+    public function setLastResponse(?string $lastResponse): void
     {
         $this->lastResponse = $lastResponse;
     }
@@ -182,7 +220,7 @@ class Client implements ClientInterface
     /**
      * @return string
      */
-    public function getLastResponseHeaders(): string
+    public function getLastResponseHeaders(): ?string
     {
         return $this->lastResponseHeaders;
     }
@@ -190,7 +228,7 @@ class Client implements ClientInterface
     /**
      * @param string $lastResponseHeaders
      */
-    public function setLastResponseHeaders(string $lastResponseHeaders): void
+    public function setLastResponseHeaders(?string $lastResponseHeaders): void
     {
         $this->lastResponseHeaders = $lastResponseHeaders;
     }
@@ -226,7 +264,7 @@ class Client implements ClientInterface
             throw new \InvalidArgumentException('Soap client is not initialized');
         }
         try {
-            $result = $this->getSoapClient()->__soapCall($method, [$input]);
+            $result = $this->getSoapClient()->__soapCall($method, $input, $this->getSoapOptions(), $this->getSoapHeaders());
         } /** @noinspection PhpRedundantCatchClauseInspection */ catch (\SoapFault $e) {
             $this->getLastRequestTrace();
             $this->getLogger()->alert(

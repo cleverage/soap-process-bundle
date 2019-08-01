@@ -15,6 +15,7 @@ use CleverAge\ProcessBundle\Model\AbstractConfigurableTask;
 use CleverAge\ProcessBundle\Model\ProcessState;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -54,6 +55,9 @@ class RequestTask extends AbstractConfigurableTask
 
         $input = $state->getInput() ?: [];
 
+        $client->setSoapOptions($this->getOption($state, 'soap_call_options'));
+        $client->setSoapHeaders($this->getOption($state, 'soap_call_headers'));
+
         $result = $client->call($options['method'], $input);
 
         // Handle empty results
@@ -91,7 +95,38 @@ class RequestTask extends AbstractConfigurableTask
                 'method',
             ]
         );
+        $resolver->setDefaults(
+            [
+                'soap_call_options' => null,
+                'soap_call_headers' => null,
+            ]
+        );
         $resolver->setAllowedTypes('client', ['string']);
         $resolver->setAllowedTypes('method', ['string']);
+        $resolver->setAllowedTypes('soap_call_options', ['array', 'null']);
+        $resolver->setAllowedTypes('soap_call_headers', ['array', 'null']);
+
+        $resolver->setNormalizer('soap_call_headers', function (Options $options, $headers) {
+            if ($headers === null) {
+                return null;
+            }
+
+            $headerResolver = new OptionsResolver();
+            $this->configureSoapCallHeaderOption($headerResolver);
+
+            $resolvedHeaders = [];
+            foreach ($headers as $name => $header) {
+                $resolvedHeader = $headerResolver->resolve($header);
+                $resolvedHeaders[] = new \SoapHeader($resolvedHeader['namespace'], $name, $resolvedHeader['data']);
+            }
+
+            return $resolvedHeaders;
+        });
+    }
+
+    protected function configureSoapCallHeaderOption(OptionsResolver $resolver)
+    {
+        $resolver->setRequired('namespace');
+        $resolver->setRequired('data');
     }
 }
