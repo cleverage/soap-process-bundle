@@ -1,0 +1,4 @@
+services:
+    cleverage_soap_process.registry.client:
+        class: CleverAge\SoapProcessBundle\Registry\ClientRegistry
+        public: false

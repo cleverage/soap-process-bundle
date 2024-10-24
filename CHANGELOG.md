@@ -3,6 +3,11 @@ v2.0
 
 ## BC breaks
 
+* [#4](https://github.com/cleverage/soap-process-bundle/issues/4) Update services according to Symfony best practices.
+Services should not use autowiring or autoconfiguration. Instead, all services should be defined explicitly.
+Services must be prefixed with the bundle alias instead of using fully qualified class names => `cleverage_soap_process`
+
+
 ### Changes
 
 * [#2](https://github.com/cleverage/soap-process-bundle/issues/2) Add Makefile & .docker for local standalone usage

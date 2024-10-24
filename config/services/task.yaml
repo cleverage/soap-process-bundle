@@ -1,0 +1,9 @@
+services:
+    cleverage_soap_process.task.request:
+        class: CleverAge\SoapProcessBundle\Task\RequestTask
+        public: false
+        arguments:
+            - '@monolog.logger'
+            - '@cleverage_soap_process.registry.client'
+        tags:
+            - { name: monolog.logger, channel: cleverage_process_task }

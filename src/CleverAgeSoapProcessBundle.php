@@ -18,13 +18,6 @@ use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-/**
- * Class CleverAgeSoapProcessBundle.
- *
- * @author  Valentin Clavreul <vclavreul@clever-age.com>
- * @author  Vincent Chalnot <vchalnot@clever-age.com>
- * @author  Madeline Veyrenc <mveyrenc@clever-age.com>
- */
 class CleverAgeSoapProcessBundle extends Bundle
 {
     /**
@@ -39,5 +32,10 @@ class CleverAgeSoapProcessBundle extends Bundle
                 'addClient'
             )
         );
+    }
+
+    public function getPath(): string
+    {
+        return \dirname(__DIR__);
     }
 }
