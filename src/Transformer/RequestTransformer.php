@@ -10,8 +10,8 @@
 
 namespace CleverAge\SoapProcessBundle\Transformer;
 
-use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\ProcessBundle\Transformer\ConfigurableTransformerInterface;
+use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
