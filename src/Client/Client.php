@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
-/**
- * This file is part of the CleverAge/ProcessBundle package.
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the CleverAge/SoapProcessBundle package.
  *
- * Copyright (C) 2017-2019 Clever-Age
+ * Copyright (c) Clever-Age
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -13,29 +16,17 @@ namespace CleverAge\SoapProcessBundle\Client;
 use Psr\Log\LoggerInterface;
 
 /**
- * Class Client
+ * Class Client.
  *
  * @author Madeline Veyrenc <mveyrenc@clever-age.com>
  */
 class Client implements ClientInterface
 {
-    /** @var string */
-    private $code;
-
-    /** @var string|null */
-    private $wsdl;
-
-    /** @var array */
-    private $options;
-
     /** @var array */
     private $soapOptions;
 
-    /** @var null|\SoapHeader[] */
+    /** @var \SoapHeader[]|null */
     private $soapHeaders;
-
-    /** @var LoggerInterface */
-    private $logger;
 
     /** @var \SoapClient */
     private $soapClient;
@@ -54,85 +45,54 @@ class Client implements ClientInterface
 
     /**
      * Client constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param string          $code
-     * @param string|null     $wsdl
-     * @param array           $options
      */
-    public function __construct(LoggerInterface $logger, string $code, ?string $wsdl, array $options)
+    public function __construct(private readonly LoggerInterface $logger, private readonly string $code, private ?string $wsdl, private array $options)
     {
-        $this->logger = $logger;
-        $this->code = $code;
-        $this->wsdl = $wsdl;
-        $this->options = $options;
     }
 
-    /**
-     * @return LoggerInterface
-     */
     public function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
 
     /**
-     * {@inheritdoc}
      * @throws \UnexpectedValueException
      */
     public function getCode(): string
     {
-        if (!$this->code) {
+        if ('' === $this->code || '0' === $this->code) {
             throw new \UnexpectedValueException('Client code is not defined');
         }
 
         return $this->code;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getWsdl(): ?string
     {
         return $this->wsdl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setWsdl(?string $wsdl): void
     {
         $this->wsdl = $wsdl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getOptions(): array
     {
         return $this->options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setOptions(array $options): void
     {
         $this->options = $options;
     }
 
-    /**
-     * @return array|null
-     */
     public function getSoapOptions(): ?array
     {
         return $this->soapOptions;
     }
 
-    /**
-     * @param array|null $soapOptions
-     */
-    public function setSoapOptions(array $soapOptions = null): void
+    public function setSoapOptions(?array $soapOptions = null): void
     {
         $this->soapOptions = $soapOptions;
     }
@@ -148,127 +108,94 @@ class Client implements ClientInterface
     /**
      * @param \SoapHeader[]|null $soapHeaders
      */
-    public function setSoapHeaders(array $soapHeaders = null): void
+    public function setSoapHeaders(?array $soapHeaders = null): void
     {
         $this->soapHeaders = $soapHeaders;
     }
 
-    /**
-     * @return \SoapClient|null
-     */
     public function getSoapClient(): ?\SoapClient
     {
         return $this->soapClient;
     }
 
-    /**
-     * @param \SoapClient $soapClient
-     */
     public function setSoapClient(\SoapClient $soapClient): void
     {
         $this->soapClient = $soapClient;
     }
 
-    /**
-     * @return string
-     */
     public function getLastRequest(): ?string
     {
         return $this->lastRequest;
     }
 
-    /**
-     * @param string $lastRequest
-     */
     public function setLastRequest(?string $lastRequest): void
     {
         $this->lastRequest = $lastRequest;
     }
 
-    /**
-     * @return string
-     */
     public function getLastRequestHeaders(): ?string
     {
         return $this->lastRequestHeaders;
     }
 
-    /**
-     * @param string $lastRequestHeaders
-     */
     public function setLastRequestHeaders(?string $lastRequestHeaders): void
     {
         $this->lastRequestHeaders = $lastRequestHeaders;
     }
 
-    /**
-     * @return string
-     */
     public function getLastResponse(): ?string
     {
         return $this->lastResponse;
     }
 
-    /**
-     * @param string $lastResponse
-     */
     public function setLastResponse(?string $lastResponse): void
     {
         $this->lastResponse = $lastResponse;
     }
 
-    /**
-     * @return string
-     */
     public function getLastResponseHeaders(): ?string
     {
         return $this->lastResponseHeaders;
     }
 
-    /**
-     * @param string $lastResponseHeaders
-     */
     public function setLastResponseHeaders(?string $lastResponseHeaders): void
     {
         $this->lastResponseHeaders = $lastResponseHeaders;
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool|mixed
      */
-    public function call(string $method, array $input = [])
+    public function call(string $method, array $input = []): mixed
     {
         $this->initializeSoapClient();
 
-        $callMethod = sprintf('soapCall%s', ucfirst($method));
+        $callMethod = \sprintf('soapCall%s', ucfirst($method));
         if (method_exists($this, $callMethod)) {
             return $this->$callMethod($input);
         }
 
         $this->getLogger()->notice(
-            sprintf("Soap call '%s' on '%s'", $method, $this->getWsdl())
+            \sprintf("Soap call '%s' on '%s'", $method, $this->getWsdl())
         );
 
         return $this->doSoapCall($method, $input);
     }
 
     /**
-     * @param string $method
-     * @param array  $input
-     *
      * @return bool|mixed
      */
-    protected function doSoapCall(string $method, array $input = [])
+    protected function doSoapCall(string $method, array $input = []): mixed
     {
-        if (!$this->getSoapClient()) {
+        if (!$this->getSoapClient() instanceof \SoapClient) {
             throw new \InvalidArgumentException('Soap client is not initialized');
         }
         try {
             $result = $this->getSoapClient()->__soapCall($method, $input, $this->getSoapOptions(), $this->getSoapHeaders());
-        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (\SoapFault $e) {
+        } /* @noinspection PhpRedundantCatchClauseInspection */ catch (\SoapFault $e) {
             $this->getLastRequestTrace();
             $this->getLogger()->alert(
-                sprintf("Soap call '%s' on '%s' failed : %s", $method, $this->getWsdl(), $e->getMessage()),
+                \sprintf("Soap call '%s' on '%s' failed : %s", $method, $this->getWsdl(), $e->getMessage()),
                 $this->getLastRequestTraceArray()
             );
 
@@ -277,9 +204,9 @@ class Client implements ClientInterface
 
         $this->getLastRequestTrace();
 
-        if (array_key_exists('trace', $this->getOptions()) && $this->getOptions()['trace']) {
+        if (\array_key_exists('trace', $this->getOptions()) && $this->getOptions()['trace']) {
             $this->getLogger()->debug(
-                sprintf("Trace of soap call '%s' on '%s'", $method, $this->getWsdl()),
+                \sprintf("Trace of soap call '%s' on '%s'", $method, $this->getWsdl()),
                 $this->getLastRequestTraceArray()
             );
         }
@@ -288,23 +215,19 @@ class Client implements ClientInterface
     }
 
     /**
-     * Initialize \SoapClient object
-     *
-     * @return void
+     * Initialize \SoapClient object.
      */
     protected function initializeSoapClient(): void
     {
-        if (!$this->getSoapClient()) {
+        if (!$this->getSoapClient() instanceof \SoapClient) {
             $options = array_merge($this->getOptions(), ['trace' => true]);
             $this->setSoapClient(new \SoapClient($this->getWsdl(), $options));
         }
     }
 
-    /**
-     */
     protected function getLastRequestTrace(): void
     {
-        if ($this->getSoapClient()) {
+        if ($this->getSoapClient() instanceof \SoapClient) {
             $this->setLastRequest($this->getSoapClient()->__getLastRequest());
             $this->setLastRequestHeaders($this->getSoapClient()->__getLastRequestHeaders());
             $this->setLastResponse($this->getSoapClient()->__getLastResponse());
@@ -312,9 +235,6 @@ class Client implements ClientInterface
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getLastRequestTraceArray(): array
     {
         return [

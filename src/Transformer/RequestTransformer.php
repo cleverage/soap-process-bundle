@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
-/**
- * This file is part of the CleverAge/ProcessBundle package.
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the CleverAge/SoapProcessBundle package.
  *
- * Copyright (C) 2017-2019 Clever-Age
+ * Copyright (c) Clever-Age
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,31 +17,13 @@ use CleverAge\ProcessBundle\Transformer\ConfigurableTransformerInterface;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-/**
- * Class RequestTransformer
- *
- * @author Madeline Veyrenc <mveyrenc@clever-age.com>
- */
 class RequestTransformer implements ConfigurableTransformerInterface
 {
-    /** @var ClientRegistry */
-    protected $registry;
-
-    /**
-     * RequestTransformer constructor.
-     *
-     * @param ClientRegistry $registry
-     */
-    public function __construct(ClientRegistry $registry)
+    public function __construct(protected ClientRegistry $registry)
     {
-        $this->registry = $registry;
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($value, array $options = [])
+    public function transform(mixed $value, array $options = []): mixed
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -50,18 +35,13 @@ class RequestTransformer implements ConfigurableTransformerInterface
     }
 
     /**
-     * Returns the unique code to identify the transformer
-     *
-     * @return string
+     * Returns the unique code to identify the transformer.
      */
     public function getCode(): string
     {
         return 'soap_request';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(
