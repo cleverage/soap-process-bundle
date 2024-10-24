@@ -5,6 +5,10 @@ v2.0
 
 ### Changes
 
+* [#2](https://github.com/cleverage/soap-process-bundle/issues/2) Add Makefile & .docker for local standalone usage
+* [#2](https://github.com/cleverage/soap-process-bundle/issues/2) Add rector, phpstan & php-cs-fixer configurations & apply it
+* [#3](https://github.com/cleverage/soap-process-bundle/issues/3) Remove `sidus/base-bundle` dependency
+
 ### Fixes
 
 v1.0.1

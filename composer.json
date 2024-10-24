@@ -44,9 +44,8 @@
     },
     "require": {
         "php": ">=8.1",
-        "cleverage/process-bundle": "dev-prepare-release",
         "ext-soap": "*",
-        "sidus/base-bundle": "~1.0"
+        "cleverage/process-bundle": "dev-prepare-release"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "*",

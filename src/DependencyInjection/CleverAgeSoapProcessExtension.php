@@ -10,9 +10,9 @@
 
 namespace CleverAge\SoapProcessBundle\DependencyInjection;
 
-use Sidus\BaseBundle\DependencyInjection\SidusBaseExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Finder\Finder;
 
@@ -21,7 +21,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class CleverAgeSoapProcessExtension extends SidusBaseExtension
+class CleverAgeSoapProcessExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container): void
     {
