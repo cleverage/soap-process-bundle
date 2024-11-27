@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace CleverAge\SoapProcessBundle;
 
 use CleverAge\ProcessBundle\DependencyInjection\Compiler\RegistryCompilerPass;
-use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -27,7 +26,7 @@ class CleverAgeSoapProcessBundle extends Bundle
     {
         $container->addCompilerPass(
             new RegistryCompilerPass(
-                ClientRegistry::class,
+                'cleverage_soap_process.registry.client',
                 'cleverage.soap.client',
                 'addClient'
             )

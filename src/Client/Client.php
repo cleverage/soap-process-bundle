@@ -46,8 +46,12 @@ class Client implements ClientInterface
     /**
      * Client constructor.
      */
-    public function __construct(private readonly LoggerInterface $logger, private readonly string $code, private ?string $wsdl, private array $options)
-    {
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly string $code,
+        private ?string $wsdl,
+        private array $options = [],
+    ) {
     }
 
     public function getLogger(): LoggerInterface
