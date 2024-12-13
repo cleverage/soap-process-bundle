@@ -33,6 +33,7 @@ class RequestTask extends AbstractConfigurableTask
 
         $client = $this->registry->getClient($options['client']);
 
+        /** @var array<mixed> $input */
         $input = $state->getInput() ?: [];
 
         $client->setSoapOptions($this->getOption($state, 'soap_call_options'));

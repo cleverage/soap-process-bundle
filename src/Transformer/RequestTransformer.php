@@ -17,16 +17,26 @@ use CleverAge\ProcessBundle\Transformer\ConfigurableTransformerInterface;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @phpstan-type Options array{
+ *       'client': string,
+ *       'method': string,
+ *  }
+ */
 class RequestTransformer implements ConfigurableTransformerInterface
 {
     public function __construct(protected ClientRegistry $registry)
     {
     }
 
+    /**
+     * @param array<mixed> $options
+     */
     public function transform(mixed $value, array $options = []): mixed
     {
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
+        /** @var Options $options */
         $options = $resolver->resolve($options);
 
         $client = $this->registry->getClient($options['client']);

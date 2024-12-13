@@ -22,7 +22,7 @@ use Psr\Log\LoggerInterface;
  */
 class Client implements ClientInterface
 {
-    /** @var array */
+    /** @var array<mixed>|null */
     private $soapOptions;
 
     /** @var \SoapHeader[]|null */
@@ -50,6 +50,7 @@ class Client implements ClientInterface
         private readonly LoggerInterface $logger,
         private readonly string $code,
         private ?string $wsdl,
+        /** @var array<mixed> */
         private array $options = [],
     ) {
     }
@@ -167,9 +168,6 @@ class Client implements ClientInterface
         $this->lastResponseHeaders = $lastResponseHeaders;
     }
 
-    /**
-     * @return bool|mixed
-     */
     public function call(string $method, array $input = []): mixed
     {
         $this->initializeSoapClient();
@@ -187,6 +185,8 @@ class Client implements ClientInterface
     }
 
     /**
+     * @param array<mixed> $input
+     *
      * @return bool|mixed
      */
     protected function doSoapCall(string $method, array $input = []): mixed
@@ -196,7 +196,7 @@ class Client implements ClientInterface
         }
         try {
             $result = $this->getSoapClient()->__soapCall($method, $input, $this->getSoapOptions(), $this->getSoapHeaders());
-        } /* @noinspection PhpRedundantCatchClauseInspection */ catch (\SoapFault $e) {
+        } catch (\SoapFault $e) {
             $this->getLastRequestTrace();
             $this->getLogger()->alert(
                 \sprintf("Soap call '%s' on '%s' failed : %s", $method, $this->getWsdl(), $e->getMessage()),
@@ -239,6 +239,14 @@ class Client implements ClientInterface
         }
     }
 
+    /**
+     * @return array{
+     *     'LastRequest': ?string,
+     *     'LastRequestHeaders': ?string,
+     *     'LastResponse': ?string,
+     *     'LastResponseHeaders': ?string
+     * }
+     */
     protected function getLastRequestTraceArray(): array
     {
         return [
