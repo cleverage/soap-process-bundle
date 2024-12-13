@@ -23,25 +23,20 @@ use Psr\Log\LoggerInterface;
 class Client implements ClientInterface
 {
     /** @var array<mixed>|null */
-    private $soapOptions;
+    private ?array $soapOptions = null;
 
     /** @var \SoapHeader[]|null */
-    private $soapHeaders;
+    private ?array $soapHeaders = null;
 
-    /** @var \SoapClient */
-    private $soapClient;
+    private ?\SoapClient $soapClient = null;
 
-    /** @var string */
-    private $lastRequest;
+    private ?string $lastRequest = null;
 
-    /** @var string */
-    private $lastRequestHeaders;
+    private ?string $lastRequestHeaders = null;
 
-    /** @var string */
-    private $lastResponse;
+    private ?string $lastResponse = null;
 
-    /** @var string */
-    private $lastResponseHeaders;
+    private ?string $lastResponseHeaders = null;
 
     /**
      * Client constructor.
@@ -231,11 +226,12 @@ class Client implements ClientInterface
 
     protected function getLastRequestTrace(): void
     {
-        if ($this->getSoapClient() instanceof \SoapClient) {
-            $this->setLastRequest($this->getSoapClient()->__getLastRequest());
-            $this->setLastRequestHeaders($this->getSoapClient()->__getLastRequestHeaders());
-            $this->setLastResponse($this->getSoapClient()->__getLastResponse());
-            $this->setLastResponseHeaders($this->getSoapClient()->__getLastResponseHeaders());
+        $soapClient = $this->getSoapClient();
+        if ($soapClient instanceof \SoapClient) {
+            $this->setLastRequest($soapClient->__getLastRequest());
+            $this->setLastRequestHeaders($soapClient->__getLastRequestHeaders());
+            $this->setLastResponse($soapClient->__getLastResponse());
+            $this->setLastResponseHeaders($soapClient->__getLastResponseHeaders());
         }
     }
 

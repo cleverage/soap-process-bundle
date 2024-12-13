@@ -21,6 +21,14 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @phpstan-type RequestOptions array{
+ *     'client': string,
+ *     'method': string,
+ *     'soap_call_options': array<mixed>|null,
+ *     'soap_call_headers': array<\SoapHeader>|null,
+ *  }
+ */
 class RequestTask extends AbstractConfigurableTask
 {
     public function __construct(protected LoggerInterface $logger, protected ClientRegistry $registry)
@@ -29,6 +37,7 @@ class RequestTask extends AbstractConfigurableTask
 
     public function execute(ProcessState $state): void
     {
+        /** @var RequestOptions $options */
         $options = $this->getOptions($state);
 
         $client = $this->registry->getClient($options['client']);
@@ -36,8 +45,12 @@ class RequestTask extends AbstractConfigurableTask
         /** @var array<mixed> $input */
         $input = $state->getInput() ?: [];
 
-        $client->setSoapOptions($this->getOption($state, 'soap_call_options'));
-        $client->setSoapHeaders($this->getOption($state, 'soap_call_headers'));
+        /** @var array<mixed>|null $soapCallOptions */
+        $soapCallOptions = $this->getOption($state, 'soap_call_options');
+        $client->setSoapOptions($soapCallOptions);
+        /** @var array<\SoapHeader>|null $soapCallHeaders */
+        $soapCallHeaders = $this->getOption($state, 'soap_call_headers');
+        $client->setSoapHeaders($soapCallHeaders);
 
         $result = $client->call($options['method'], $input);
 
@@ -93,7 +106,9 @@ class RequestTask extends AbstractConfigurableTask
             $this->configureSoapCallHeaderOption($headerResolver);
 
             $resolvedHeaders = [];
+            /** @var array<string, array<mixed>> $headers */
             foreach ($headers as $name => $header) {
+                /** @var array{'namespace': string, 'data': array<mixed>} $resolvedHeader */
                 $resolvedHeader = $headerResolver->resolve($header);
                 $resolvedHeaders[] = new \SoapHeader($resolvedHeader['namespace'], $name, $resolvedHeader['data']);
             }

@@ -18,7 +18,7 @@ use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @phpstan-type Options array{
+ * @phpstan-type TransformerOptions array{
  *       'client': string,
  *       'method': string,
  *  }
@@ -34,9 +34,13 @@ class RequestTransformer implements ConfigurableTransformerInterface
      */
     public function transform(mixed $value, array $options = []): mixed
     {
+        if (!\is_array($value)) {
+            throw new \UnexpectedValueException('Expecting an array of value');
+        }
+
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
-        /** @var Options $options */
+        /** @var TransformerOptions $options */
         $options = $resolver->resolve($options);
 
         $client = $this->registry->getClient($options['client']);
