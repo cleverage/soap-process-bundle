@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
-/**
- * This file is part of the CleverAge/ProcessBundle package.
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the CleverAge/SoapProcessBundle package.
  *
- * Copyright (C) 2017-2019 Clever-Age
+ * Copyright (c) Clever-Age
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -10,78 +13,61 @@
 
 namespace CleverAge\SoapProcessBundle\Client;
 
-/**
- * Interface ClientInterface
- *
- * @author Madeline Veyrenc <mveyrenc@clever-age.com>
- */
 interface ClientInterface
 {
     /**
      * Return the code of the client used in client registry.
-     *
-     * @return string
      */
     public function getCode(): string;
 
     /**
      * Return the URI of the WSDL file or NULL if working in non-WSDL mode.
-     *
-     * @return string
      */
     public function getWsdl(): ?string;
 
     /**
      * Set the URI of the WSDL file or NULL if working in non-WSDL mode.
-     *
-     * @param string $wsdl
-     *
-     * @return void
      */
     public function setWsdl(?string $wsdl): void;
 
     /**
-     * Return the Soap client options
+     * Return the Soap client options.
      *
      * @see http://php.net/manual/en/soapclient.soapclient.php
      *
-     * @return array
+     * @return array<mixed>
      */
     public function getOptions(): array;
 
     /**
-     * Set the Soap client options
+     * Set the Soap client options.
      *
      * @see http://php.net/manual/en/soapclient.soapclient.php
      *
-     * @param array $options
-     *
-     * @return void
+     * @param array<mixed> $options
      */
     public function setOptions(array $options): void;
 
     /**
-     * Return the Soap call options
+     * Return the Soap call options.
      *
      * @see https://www.php.net/manual/en/soapclient.soapcall.php
      *
-     * @return array|null
+     * @return array<mixed>|null
      */
     public function getSoapOptions(): ?array;
 
     /**
-     * Set the Soap call options
+     * Set the Soap call options.
      *
      * @see https://www.php.net/manual/en/soapclient.soapcall.php
      *
-     * @param array|null $options
-     *
-     * @return void
+     * @param array<mixed>|null $options
      */
-    public function setSoapOptions(array $options = null): void;
+    public function setSoapOptions(?array $options = null): void;
 
     /**
-     * Return the Soap call headers
+     * Return the Soap call headers.
      *
      * @see https://www.php.net/manual/en/soapclient.soapcall.php
      *
@@ -90,43 +76,28 @@ interface ClientInterface
     public function getSoapHeaders(): ?array;
 
     /**
-     * Set the Soap call headers
+     * Set the Soap call headers.
      *
      * @see https://www.php.net/manual/en/soapclient.soapcall.php
      *
      * @param \SoapHeader[]|null $headers
-     *
-     * @return void
      */
-    public function setSoapHeaders(array $headers = null): void;
+    public function setSoapHeaders(?array $headers = null): void;
 
-    /**
-     * @return string
-     */
     public function getLastRequest(): ?string;
 
-    /**
-     * @return string
-     */
     public function getLastRequestHeaders(): ?string;
 
-    /**
-     * @return string
-     */
     public function getLastResponse(): ?string;
 
-    /**
-     * @return string
-     */
     public function getLastResponseHeaders(): ?string;
 
     /**
-     * Call Soap method
+     * Call Soap method.
      *
-     * @param string $method
-     * @param array  $input
+     * @param array<mixed> $input
      *
-     * @return mixed
+     * @return bool|mixed
      */
-    public function call(string $method, array $input = []);
+    public function call(string $method, array $input = []): mixed;
 }

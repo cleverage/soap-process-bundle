@@ -1,8 +1,11 @@
-<?php declare(strict_types=1);
-/**
- * This file is part of the CleverAge/ProcessBundle package.
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the CleverAge/SoapProcessBundle package.
  *
- * Copyright (C) 2017-2019 Clever-Age
+ * Copyright (c) Clever-Age
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -19,44 +22,35 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class RequestTask
- *
- * @author Madeline Veyrenc <mveyrenc@clever-age.com>
+ * @phpstan-type RequestOptions array{
+ *     'client': string,
+ *     'method': string,
+ *     'soap_call_options': array<mixed>|null,
+ *     'soap_call_headers': array<\SoapHeader>|null,
+ *  }
  */
 class RequestTask extends AbstractConfigurableTask
 {
-
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /** @var ClientRegistry */
-    protected $registry;
-
-    /**
-     * SoapClientTask constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param ClientRegistry  $registry
-     */
-    public function __construct(LoggerInterface $logger, ClientRegistry $registry)
+    public function __construct(protected LoggerInterface $logger, protected ClientRegistry $registry)
     {
-        $this->logger = $logger;
-        $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(ProcessState $state): void
     {
+        /** @var RequestOptions $options */
         $options = $this->getOptions($state);
 
         $client = $this->registry->getClient($options['client']);
 
+        /** @var array<mixed> $input */
         $input = $state->getInput() ?: [];
 
-        $client->setSoapOptions($this->getOption($state, 'soap_call_options'));
-        $client->setSoapHeaders($this->getOption($state, 'soap_call_headers'));
+        /** @var array<mixed>|null $soapCallOptions */
+        $soapCallOptions = $this->getOption($state, 'soap_call_options');
+        $client->setSoapOptions($soapCallOptions);
+        /** @var array<\SoapHeader>|null $soapCallHeaders */
+        $soapCallHeaders = $this->getOption($state, 'soap_call_headers');
+        $client->setSoapHeaders($soapCallHeaders);
 
         $result = $client->call($options['method'], $input);
 
@@ -74,9 +68,9 @@ class RequestTask extends AbstractConfigurableTask
 
             $this->logger->error('Empty resultset for query', $logContext);
 
-            if ($state->getTaskConfiguration()->getErrorStrategy() === TaskConfiguration::STRATEGY_SKIP) {
+            if (TaskConfiguration::STRATEGY_SKIP === $state->getTaskConfiguration()->getErrorStrategy()) {
                 $state->setSkipped(true);
-            } elseif ($state->getTaskConfiguration()->getErrorStrategy() === TaskConfiguration::STRATEGY_STOP) {
+            } elseif (TaskConfiguration::STRATEGY_STOP === $state->getTaskConfiguration()->getErrorStrategy()) {
                 $state->setStopped(true);
             }
         }
@@ -84,9 +78,6 @@ class RequestTask extends AbstractConfigurableTask
         $state->setOutput($result);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(
@@ -107,7 +98,7 @@ class RequestTask extends AbstractConfigurableTask
         $resolver->setAllowedTypes('soap_call_headers', ['array', 'null']);
 
         $resolver->setNormalizer('soap_call_headers', function (Options $options, $headers) {
-            if ($headers === null) {
+            if (null === $headers) {
                 return null;
             }
 
@@ -115,7 +106,9 @@ class RequestTask extends AbstractConfigurableTask
             $this->configureSoapCallHeaderOption($headerResolver);
 
             $resolvedHeaders = [];
+            /** @var array<string, array<mixed>> $headers */
             foreach ($headers as $name => $header) {
+                /** @var array{'namespace': string, 'data': array<mixed>} $resolvedHeader */
                 $resolvedHeader = $headerResolver->resolve($header);
                 $resolvedHeaders[] = new \SoapHeader($resolvedHeader['namespace'], $name, $resolvedHeader['data']);
             }
@@ -124,7 +117,7 @@ class RequestTask extends AbstractConfigurableTask
         });
     }
 
-    protected function configureSoapCallHeaderOption(OptionsResolver $resolver)
+    protected function configureSoapCallHeaderOption(OptionsResolver $resolver): void
     {
         $resolver->setRequired('namespace');
         $resolver->setRequired('data');
