@@ -2,6 +2,7 @@ services:
     cleverage_soap_process.task.request:
         class: CleverAge\SoapProcessBundle\Task\RequestTask
         public: false
+        shared: false
         arguments:
             - '@monolog.logger'
             - '@cleverage_soap_process.registry.client'
