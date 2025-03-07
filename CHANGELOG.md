@@ -1,3 +1,10 @@
+v2.0.1
+------
+
+### Fixes
+
+* [#10](https://github.com/cleverage/soap-process-bundle/issues/10) Add missing shared: false on tasks
+
 v2.0
 ------
 
