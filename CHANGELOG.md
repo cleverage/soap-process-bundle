@@ -1,3 +1,11 @@
+v2.1
+------
+
+### Changes
+
+* [#12](https://github.com/cleverage/soap-process-bundle/issues/12) Upgrade to Symfony 7.3 & PHP 8.4
+
+
 v2.0.1
 ------
 
