@@ -1,3 +1,13 @@
+v3.0
+------
+
+### Changes
+* [#14](https://github.com/cleverage/soap-process-bundle/issues/14) Add support for PHP 8.5 and Symfony 8.* Update phpunit/phpunit to version >10.0 Bump version to cleverage/process-bundle ^5.0
+
+### BC breaks
+* [#14](https://github.com/cleverage/soap-process-bundle/issues/14) Remove support for PHP 8.1 and Symfony 7.3
+
+
 v2.1
 ------
 

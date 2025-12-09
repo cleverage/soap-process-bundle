@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.5-fpm-alpine
 
 ARG UID
 ARG GID
@@ -14,8 +14,8 @@ RUN apk update && apk add \
     icu-dev \
     libxml2-dev \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install intl soap opcache \
-    && docker-php-ext-enable soap opcache
+    && docker-php-ext-install intl soap \
+    && docker-php-ext-enable soap
 
 RUN ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime \
     && sed -i "s/^;date.timezone =.*/date.timezone = Europe\/Paris/" $PHP_INI_DIR/php.ini
