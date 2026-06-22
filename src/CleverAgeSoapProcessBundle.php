@@ -33,6 +33,7 @@ class CleverAgeSoapProcessBundle extends Bundle
         );
     }
 
+    #[\Override]
     public function getPath(): string
     {
         return \dirname(__DIR__);
