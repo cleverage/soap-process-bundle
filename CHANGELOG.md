@@ -1,3 +1,9 @@
+Latest
+------
+
+### Changes
+* [#20](https://github.com/cleverage/soap-process-bundle/issues/20) Update quality stack: use Rector `withComposerBased()` sets (removed `SYMFONY_64` / `PHPUNIT_100` sets), declare used Symfony packages and PHPUnit range in composer.json, apply quality tools fixes
+
 v3.0
 ------
 
