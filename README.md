@@ -13,7 +13,7 @@ For usage documentation, see:
 
 ## Support & Contribution
 
-For general support and questions, please use [Github](https://github.com/cleverage/rest-process-bundle/issues).
+For general support and questions, please use [Github](https://github.com/cleverage/soap-process-bundle/issues).
 If you think you found a bug or you have a feature idea to propose, feel free to open an issue after looking at the [contributing](CONTRIBUTING.md) guide.
 
 ## License
