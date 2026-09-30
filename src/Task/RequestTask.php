@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace CleverAge\SoapProcessBundle\Task;
 
-use CleverAge\ProcessBundle\Configuration\TaskConfiguration;
 use CleverAge\ProcessBundle\Model\AbstractConfigurableTask;
 use CleverAge\ProcessBundle\Model\ProcessState;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
@@ -64,15 +63,11 @@ class RequestTask extends AbstractConfigurableTask
                 'last_response_headers' => $client->getLastResponseHeaders(),
             ];
 
-            $state->setErrorOutput($result);
-
             $this->logger->error('Empty resultset for query', $logContext);
 
-            if (TaskConfiguration::STRATEGY_SKIP === $state->getTaskConfiguration()->getErrorStrategy()) {
-                $state->setSkipped(true);
-            } elseif (TaskConfiguration::STRATEGY_STOP === $state->getTaskConfiguration()->getErrorStrategy()) {
-                $state->setStopped(true);
-            }
+            // The process manager applies the error strategy: the process fails with "stop", the error outputs
+            // receive the task input with "skip"
+            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']));
         }
 
         $state->setOutput($result);

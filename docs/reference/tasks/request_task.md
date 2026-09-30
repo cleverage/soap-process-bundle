@@ -25,7 +25,7 @@ Possible outputs
 `mixed`: the result of the SOAP call, usually a `stdClass` (or an array of `stdClass`) built by `SoapClient` from the
 response.
 
-`false` when the call failed (`SoapFault`), see Notes.
+When the call fails, an exception is thrown and the `error_strategy` applies, see Notes.
 
 Options
 -------
@@ -85,12 +85,12 @@ get_order:
 Notes
 -----
 
-* When the call fails (the client returns `false`, see [client](../client.md)), the task:
-  - logs an error `Empty resultset for query`, with the options and the last request and response in the log context
-  - sets `false` as error output, so the `error_outputs` tasks receive `false` (not the input of the task)
-  - with `error_strategy: skip`, skips the `outputs` tasks
-  - with `error_strategy: stop`, stops the process. No exception is set on the state, so the process is **not**
-    marked as failed and the console command does not return an error code
+* When the call fails (the client returns `false`, see [client](../client.md)), the task logs an error
+  `Empty resultset for query`, with the options and the last request and response in the log context, then throws a
+  `RuntimeException` (`Soap call '<method>' on client '<client>' failed`), handled by the `error_strategy`:
+  - with `error_strategy: skip`, the `outputs` tasks are skipped and the `error_outputs` tasks receive the input of
+    the task
+  - with `error_strategy: stop`, the process fails and the console command returns an error code
 * An exception thrown by the client (e.g. a `SoapFault` when the WSDL cannot be loaded, or a
   `MissingClientException` for an unknown `client`) is handled as usual by the `error_strategy`.
 * `soap_call_options` and `soap_call_headers` are set on the client each time the task is executed, including when
