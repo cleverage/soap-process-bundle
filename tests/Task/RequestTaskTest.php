@@ -18,11 +18,13 @@ use CleverAge\SoapProcessBundle\Client\ClientInterface;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Task\RequestTask;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
 #[CoversClass(RequestTask::class)]
+#[UsesClass(ClientRegistry::class)]
 class RequestTaskTest extends TestCase
 {
     public function testExecute(): void
