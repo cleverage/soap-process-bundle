@@ -90,7 +90,7 @@ How it works:
   and [wrapper](https://github.com/cleverage/process-bundle/blob/main/docs/reference/transformers/wrapper_transformer.md)
   transformers: `FullCountryInfo` is a document/literal method expecting a single `parameters` structure.
 - The [RequestTask](../reference/tasks/request_task.md) calls `FullCountryInfo` with these arguments. With
-  `error_strategy: skip`, a failed call is logged by the task, `false` is sent to the
+  `error_strategy: skip`, a failed call is logged by the task, the SOAP arguments built from the line are sent to the
   [LoggerTask](https://github.com/cleverage/process-bundle/blob/main/docs/reference/tasks/logger_task.md) of the
   `error_outputs`, and the line is not written.
 - The second TransformerTask extracts the result from the `stdClass` response
@@ -99,8 +99,9 @@ How it works:
   and maps the columns to write with the
   [CsvWriterTask](https://github.com/cleverage/process-bundle/blob/main/docs/reference/tasks/csv_writer_task.md).
 
-Note that the error output of the RequestTask is `false`, not the CSV line: the details of the failed call (options,
-last request and response) are in the log context of the `Empty resultset for query` error logged by the task.
+Note that the error output of the RequestTask is its input (the SOAP arguments), not the CSV line: the details of the
+failed call (options, last request and response) are in the log context of the `Empty resultset for query` error
+logged by the task.
 
 To add a single value to the line instead of replacing it, the SOAP call can also be done inside a `mapping` with the
 [RequestTransformer](../reference/transformers/request_transformer.md) (`soap_request`), e.g. with `keep_input: true`:

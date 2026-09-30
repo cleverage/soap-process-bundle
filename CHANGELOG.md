@@ -5,6 +5,9 @@ Latest
 * [#20](https://github.com/cleverage/soap-process-bundle/issues/20) Update quality stack: use Rector `withComposerBased()` sets (removed `SYMFONY_64` / `PHPUNIT_100` sets), declare used Symfony packages and PHPUnit range in composer.json, apply quality tools fixes
 * [#22](https://github.com/cleverage/soap-process-bundle/issues/22) Add missing documentations: reference pages for Client, RequestTask & RequestTransformer, cookbooks. Harmonize and fix existing documentation.
 
+### Fixes
+* [#25](https://github.com/cleverage/soap-process-bundle/issues/25) RequestTask throws an exception when the SOAP call fails, so that the error strategy applies: the process now fails with the `stop` strategy, and the error outputs receive the task input (instead of `false`) with the `skip` strategy
+
 v3.0
 ------
 
