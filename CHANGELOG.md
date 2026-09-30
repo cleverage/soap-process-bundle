@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Changes
+* [#27](https://github.com/cleverage/soap-process-bundle/issues/27) Give the ids of both services in the error on duplicate client codes: the clients are registered by a compiler pass of the bundle, `ClientRegistry::addClient()` gets an optional `$serviceId` argument. Update documentation, add tests.
+
 v3.1
 ------
 

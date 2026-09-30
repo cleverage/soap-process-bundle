@@ -123,8 +123,9 @@ class CountryInfoClient extends Client
 Notes
 -----
 
-* Codes must be unique: registering two clients with the same code throws an `\UnexpectedValueException`
-  (`Client <code> is already defined`) when the registry is instantiated, i.e. when the first SOAP task or
+* Codes must be unique: registering two clients with the same code throws an `\UnexpectedValueException` giving the
+  ids of both services (`Client <code> is already defined by service "<id>", cannot register service "<id>"`) when
+  the registry is instantiated, i.e. when the first SOAP task or
   transformer service is built.
 * Using a code that is not registered throws a `CleverAge\SoapProcessBundle\Exception\MissingClientException`
   (`No Soap client with code : <code>`).
