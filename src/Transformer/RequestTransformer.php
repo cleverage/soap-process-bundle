@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace CleverAge\SoapProcessBundle\Transformer;
 
 use CleverAge\ProcessBundle\Transformer\ConfigurableTransformerInterface;
+use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -21,10 +22,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * @phpstan-type TransformerOptions array{
  *       'client': string,
  *       'method': string,
+ *       'soap_call_options': array<mixed>|null,
+ *       'soap_call_headers': array<\SoapHeader>|null,
  *  }
  */
 class RequestTransformer implements ConfigurableTransformerInterface
 {
+    use SoapCallOptionsTrait;
+
     public function __construct(protected ClientRegistry $registry)
     {
     }
@@ -45,7 +50,11 @@ class RequestTransformer implements ConfigurableTransformerInterface
 
         $client = $this->registry->getClient($options['client']);
 
-        return $client->call($options['method'], $value);
+        try {
+            return $this->callWithSoapOptions($client, $options['method'], $value, $options['soap_call_options'], $options['soap_call_headers']);
+        } catch (\SoapFault $e) {
+            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
+        }
     }
 
     /**
@@ -66,5 +75,7 @@ class RequestTransformer implements ConfigurableTransformerInterface
         );
         $resolver->setAllowedTypes('client', ['string']);
         $resolver->setAllowedTypes('method', ['string']);
+
+        $this->configureSoapCallOptions($resolver);
     }
 }

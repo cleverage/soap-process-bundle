@@ -15,9 +15,9 @@ namespace CleverAge\SoapProcessBundle\Task;
 
 use CleverAge\ProcessBundle\Model\AbstractConfigurableTask;
 use CleverAge\ProcessBundle\Model\ProcessState;
+use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -30,6 +30,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestTask extends AbstractConfigurableTask
 {
+    use SoapCallOptionsTrait;
+
     public function __construct(protected LoggerInterface $logger, protected ClientRegistry $registry)
     {
     }
@@ -41,22 +43,17 @@ class RequestTask extends AbstractConfigurableTask
 
         $client = $this->registry->getClient($options['client']);
 
-        /** @var array<mixed> $input */
         $input = $state->getInput() ?: [];
+        if (!\is_array($input)) {
+            throw new \UnexpectedValueException(\sprintf('RequestTask expects an array or empty input, %s given', get_debug_type($input)));
+        }
 
-        /** @var array<mixed>|null $soapCallOptions */
-        $soapCallOptions = $this->getOption($state, 'soap_call_options');
-        $client->setSoapOptions($soapCallOptions);
-        /** @var array<\SoapHeader>|null $soapCallHeaders */
-        $soapCallHeaders = $this->getOption($state, 'soap_call_headers');
-        $client->setSoapHeaders($soapCallHeaders);
-
-        $result = $client->call($options['method'], $input);
-
-        // Handle empty results
-        if (false === $result) {
+        try {
+            $result = $this->callWithSoapOptions($client, $options['method'], $input, $options['soap_call_options'], $options['soap_call_headers']);
+        } catch (\SoapFault $e) {
             $logContext = [
                 'options' => $options,
+                'message' => $e->getMessage(),
                 'last_request' => $client->getLastRequest(),
                 'last_request_headers' => $client->getLastRequestHeaders(),
                 'last_response' => $client->getLastResponse(),
@@ -67,7 +64,7 @@ class RequestTask extends AbstractConfigurableTask
 
             // The process manager applies the error strategy: the process fails with "stop", the error outputs
             // receive the task input with "skip"
-            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']));
+            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
         }
 
         $state->setOutput($result);
@@ -81,40 +78,9 @@ class RequestTask extends AbstractConfigurableTask
                 'method',
             ]
         );
-        $resolver->setDefaults(
-            [
-                'soap_call_options' => null,
-                'soap_call_headers' => null,
-            ]
-        );
         $resolver->setAllowedTypes('client', ['string']);
         $resolver->setAllowedTypes('method', ['string']);
-        $resolver->setAllowedTypes('soap_call_options', ['array', 'null']);
-        $resolver->setAllowedTypes('soap_call_headers', ['array', 'null']);
 
-        $resolver->setNormalizer('soap_call_headers', function (Options $options, $headers) {
-            if (null === $headers) {
-                return null;
-            }
-
-            $headerResolver = new OptionsResolver();
-            $this->configureSoapCallHeaderOption($headerResolver);
-
-            $resolvedHeaders = [];
-            /** @var array<string, array<mixed>> $headers */
-            foreach ($headers as $name => $header) {
-                /** @var array{'namespace': string, 'data': array<mixed>} $resolvedHeader */
-                $resolvedHeader = $headerResolver->resolve($header);
-                $resolvedHeaders[] = new \SoapHeader($resolvedHeader['namespace'], $name, $resolvedHeader['data']);
-            }
-
-            return $resolvedHeaders;
-        });
-    }
-
-    protected function configureSoapCallHeaderOption(OptionsResolver $resolver): void
-    {
-        $resolver->setRequired('namespace');
-        $resolver->setRequired('data');
+        $this->configureSoapCallOptions($resolver);
     }
 }

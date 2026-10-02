@@ -97,7 +97,7 @@ interface ClientInterface
      *
      * @param array<mixed> $input
      *
-     * @return bool|mixed
+     * @throws \SoapFault when the call fails
      */
     public function call(string $method, array $input = []): mixed;
 }

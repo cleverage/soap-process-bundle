@@ -167,14 +167,14 @@ class Client implements ClientInterface
     {
         $this->initializeSoapClient();
 
+        $this->getLogger()->notice(
+            \sprintf("Soap call '%s' on '%s'", $method, $this->getWsdl())
+        );
+
         $callMethod = \sprintf('soapCall%s', ucfirst($method));
         if (method_exists($this, $callMethod)) {
             return $this->$callMethod($input);
         }
-
-        $this->getLogger()->notice(
-            \sprintf("Soap call '%s' on '%s'", $method, $this->getWsdl())
-        );
 
         return $this->doSoapCall($method, $input);
     }
@@ -182,7 +182,7 @@ class Client implements ClientInterface
     /**
      * @param array<mixed> $input
      *
-     * @return bool|mixed
+     * @throws \SoapFault when the call fails, after logging it
      */
     protected function doSoapCall(string $method, array $input = []): mixed
     {
@@ -191,6 +191,10 @@ class Client implements ClientInterface
         }
         try {
             $result = $this->getSoapClient()->__soapCall($method, $input, $this->getSoapOptions(), $this->getSoapHeaders());
+            // With the "exceptions: false" option, SoapClient returns the fault instead of throwing it
+            if ($result instanceof \SoapFault) {
+                throw $result;
+            }
         } catch (\SoapFault $e) {
             $this->getLastRequestTrace();
             $this->getLogger()->alert(
@@ -198,7 +202,7 @@ class Client implements ClientInterface
                 $this->getLastRequestTraceArray()
             );
 
-            return false;
+            throw $e;
         }
 
         $this->getLastRequestTrace();
