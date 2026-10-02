@@ -113,9 +113,8 @@ class CountryInfoClient extends Client
      */
     protected function soapCallCountryName(array $input): mixed
     {
-        $result = $this->doSoapCall('CountryName', $input);
-
-        return false === $result ? false : $result->CountryNameResult;
+        // Throws the SoapFault when the call fails
+        return $this->doSoapCall('CountryName', $input)->CountryNameResult;
     }
 }
 ```
@@ -134,10 +133,11 @@ Notes
 * The `trace` option is always forced to `true` when the `SoapClient` is created, so that the last request and
   response are always available (they are added to the log context of a failed call). Setting `trace: true` in
   `$options` additionally logs them at `debug` level after each successful call.
-* Each generic call is logged at `notice` level (`Soap call '<method>' on '<wsdl>'`). When a `SoapFault` is thrown
-  (i.e. with `exceptions: true`, the default of `SoapClient`), the error is logged at `alert` level, with the last
-  request and response in the log context, and `false` is returned instead of throwing. With `exceptions: false`,
-  `SoapClient` returns the `SoapFault` object, which is then returned as a regular result.
-* A client service is shared by default: the SOAP call options and headers set by a [RequestTask](tasks/request_task.md) remain
-  set on the client for the following calls, including calls made by the
-  [RequestTransformer](transformers/request_transformer.md).
+* Each call is logged at `notice` level (`Soap call '<method>' on '<wsdl>'`), including the ones handled by a
+  `soapCall<Method>()` override. When the call fails with a `SoapFault`, the error is logged at `alert` level, with the
+  last request and response in the log context, then the `SoapFault` is thrown. With the `exceptions: false` option,
+  `SoapClient` returns the `SoapFault` instead of throwing it: it is handled the same way.
+* A client service is shared by default: the SOAP options and headers set with `setSoapOptions()` /
+  `setSoapHeaders()` (e.g. in the `calls` of the service definition) are used by every call. The
+  [RequestTask](tasks/request_task.md) and the [RequestTransformer](transformers/request_transformer.md) set their
+  own `soap_call_options` / `soap_call_headers` for their call only, then restore these values.

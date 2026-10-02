@@ -2,7 +2,15 @@ Latest
 ------
 
 ### Changes
+* [#23](https://github.com/cleverage/soap-process-bundle/issues/23) Add missing tests: Client (with a fake SoapClient), RequestTask, RequestTransformer, MissingClientException, bundle and DI extension.
 * [#27](https://github.com/cleverage/soap-process-bundle/issues/27) Give the ids of both services in the error on duplicate client codes: the clients are registered by a compiler pass of the bundle, `ClientRegistry::addClient()` gets an optional `$serviceId` argument. Update documentation, add tests.
+
+### Fixes
+* [#29](https://github.com/cleverage/soap-process-bundle/issues/29) Fix RequestTask: keep the SOAP options and headers of the client definition when `soap_call_options` / `soap_call_headers` are not set (they were overwritten by `null`). Update documentation, add tests.
+* [#30](https://github.com/cleverage/soap-process-bundle/issues/30) Fix RequestTask and RequestTransformer: set `soap_call_options` / `soap_call_headers` for the call only (they leaked to the next calls of the client), add these options to the `soap_request` transformer. Update documentation, add tests.
+* [#31](https://github.com/cleverage/soap-process-bundle/issues/31) Fix Client: throw the `SoapFault` of a failed call (it returned `false`), so a method returning `false` is no longer handled as failed, and the `soap_request` transformer fails on a `SoapFault`. Update documentation, add tests.
+* [#32](https://github.com/cleverage/soap-process-bundle/issues/32) Fix Client: a `SoapFault` returned with the `exceptions: false` option makes the call fail (it was returned as a result). Update documentation, add tests.
+* [#33](https://github.com/cleverage/soap-process-bundle/issues/33) Fix RequestTask: throw an explicit `\UnexpectedValueException` on a non-array input (a `TypeError` was triggered); Client: log the notice of the calls handled by a `soapCall<Method>()` override. Update documentation, add tests.
 
 v3.1
 ------

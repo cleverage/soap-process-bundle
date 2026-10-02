@@ -15,6 +15,8 @@ Accepted inputs
 [SoapClient::__soapCall()](https://www.php.net/manual/en/soapclient.soapcall.php). An empty input (`null`, `[]`, …)
 calls the method without argument.
 
+Any other non-empty input (e.g. a `string`) throws an `\UnexpectedValueException`.
+
 For a document/literal service, the arguments of the method are usually wrapped in a single array, e.g.
 `{ parameters: { sCountryISOCode: FR } }` (in WSDL mode, the keys of the first level are ignored, only the order
 matters).
@@ -85,14 +87,16 @@ get_order:
 Notes
 -----
 
-* When the call fails (the client returns `false`, see [client](../client.md)), the task logs an error
-  `Empty resultset for query`, with the options and the last request and response in the log context, then throws a
-  `RuntimeException` (`Soap call '<method>' on client '<client>' failed`), handled by the `error_strategy`:
+* When the call fails (the client throws a `SoapFault`, see [client](../client.md)), the task logs an error
+  `Empty resultset for query`, with the options, the fault message and the last request and response in the log
+  context, then throws a `RuntimeException` (`Soap call '<method>' on client '<client>' failed`, with the `SoapFault`
+  as previous exception), handled by the `error_strategy`:
   - with `error_strategy: skip`, the `outputs` tasks are skipped and the `error_outputs` tasks receive the input of
     the task
   - with `error_strategy: stop`, the process fails and the console command returns an error code
-* An exception thrown by the client (e.g. a `SoapFault` when the WSDL cannot be loaded, or a
+* A method returning `false` is a successful call: `false` is output.
+* An exception thrown by the client before the call (e.g. a `SoapFault` when the WSDL cannot be loaded, or a
   `MissingClientException` for an unknown `client`) is handled as usual by the `error_strategy`.
-* `soap_call_options` and `soap_call_headers` are set on the client each time the task is executed, including when
-  they are `null`: they overwrite the values configured with `setSoapOptions` / `setSoapHeaders` in the client
-  service definition.
+* `soap_call_options` and `soap_call_headers` are set on the client for the call only, then the previous values are
+  restored: when they are not set (`null`), the values configured with `setSoapOptions` / `setSoapHeaders` in the
+  client service definition are used, and they never leak to the following calls of the client.

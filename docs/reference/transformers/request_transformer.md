@@ -24,15 +24,17 @@ Possible outputs
 
 `mixed`: the result of the SOAP call, usually a `stdClass` built by `SoapClient` from the response.
 
-`false` when the call failed (`SoapFault`), see Notes.
+A failed call (`SoapFault`) throws a `RuntimeException`, see Notes.
 
 Options
 -------
 
-| Code     | Type     | Required | Default | Description                               |
-|----------|----------|:--------:|---------|-------------------------------------------|
-| `client` | `string` |  **X**   |         | Code of the [client](../client.md) to use |
-| `method` | `string` |  **X**   |         | Name of the SOAP method to call           |
+| Code                | Type          | Required | Default | Description                                                                                          |
+|---------------------|---------------|:--------:|---------|------------------------------------------------------------------------------------------------------|
+| `client`            | `string`      |  **X**   |         | Code of the [client](../client.md) to use                                                            |
+| `method`            | `string`      |  **X**   |         | Name of the SOAP method to call                                                                      |
+| `soap_call_options` | `array\|null` |          | `null`  | `$options` of `SoapClient::__soapCall()`, as for the [RequestTask](../tasks/request_task.md#options) |
+| `soap_call_headers` | `array\|null` |          | `null`  | Headers sent with the request, as for the [RequestTask](../tasks/request_task.md#options)            |
 
 Examples
 --------
@@ -61,12 +63,11 @@ property_accessor:
 Notes
 -----
 
-* The transformer does not handle any SOAP call option or header: the values currently set on the client are used
-  (from the `calls` of the client service definition, or from the last [RequestTask](../tasks/request_task.md)
-  executed with the same client).
-* A failed call is logged by the [client](../client.md) and returns `false`, without any exception: check the result
-  (or chain a transformer that fails on `false`, like `property_accessor` above) if the process must not go on
-  silently with a `false` value.
+* `soap_call_options` and `soap_call_headers` are set on the client for the call only, then the previous values are
+  restored: when they are not set, the values of the client service definition (`calls`) are used.
+* A failed call (`SoapFault`) is logged by the [client](../client.md), then the transformer throws a
+  `RuntimeException` (`Soap call '<method>' on client '<client>' failed`). A method returning `false` returns
+  `false`.
 * One SOAP call is made each time the transformer is applied: to avoid calling the service several times with the same
   arguments, wrap it in the
   [cached](https://github.com/cleverage/process-bundle/blob/main/docs/reference/transformers/cached_transformer.md)
