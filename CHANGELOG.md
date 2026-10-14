@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Changes
+* [#38](https://github.com/cleverage/soap-process-bundle/issues/38) Require `psr/log`, used directly by `Client` and `RequestTask` but only installed through `cleverage/process-bundle`.
+
 ### Fixes
 * [#37](https://github.com/cleverage/soap-process-bundle/issues/37) Fix RequestTask: inject the `logger` service instead of `monolog.logger`, so that it logs on the `cleverage_process_task` channel of its `monolog.logger` tag (it logged on the `app` channel, without the process context, and its logs were missing from the process execution logs of the UI). Add tests.
 
