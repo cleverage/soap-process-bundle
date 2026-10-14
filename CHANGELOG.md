@@ -2,6 +2,7 @@ Latest
 ------
 
 ### Changes
+* [#41](https://github.com/cleverage/soap-process-bundle/issues/41) Add a `.gitattributes`: the development files (`.docker/`, `.github/`, `tests/`, quality tools and PHPUnit configurations, `Makefile`) are no longer part of the archive installed by Composer (`dist`).
 * [#38](https://github.com/cleverage/soap-process-bundle/issues/38) Require `psr/log`, used directly by `Client` and `RequestTask` but only installed through `cleverage/process-bundle`.
 
 ### Fixes
