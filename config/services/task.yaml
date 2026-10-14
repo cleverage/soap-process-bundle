@@ -4,7 +4,7 @@ services:
         public: false
         shared: false
         arguments:
-            - '@monolog.logger'
+            - '@logger'
             - '@cleverage_soap_process.registry.client'
         tags:
             - { name: monolog.logger, channel: cleverage_process_task }

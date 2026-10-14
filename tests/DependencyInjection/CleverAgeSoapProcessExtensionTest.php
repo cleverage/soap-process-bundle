@@ -21,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 #[CoversClass(CleverAgeSoapProcessExtension::class)]
 class CleverAgeSoapProcessExtensionTest extends TestCase
@@ -40,6 +41,17 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
         // Referenced as '@<class>' in process configurations
         self::assertSame($taskIds[0], (string) $container->getAlias(RequestTask::class));
         self::assertTrue($container->getAlias(RequestTask::class)->isPublic());
+        // Logged in the process tasks channel: the "channel" of the "monolog.logger" tag only applies to a reference to
+        // the "logger" service
+        self::assertSame([['channel' => 'cleverage_process_task']], $task->getTag('monolog.logger'));
+        $references = [];
+        foreach ($task->getArguments() as $argument) {
+            if ($argument instanceof Reference) {
+                $references[] = (string) $argument;
+            }
+        }
+        self::assertContains('logger', $references);
+        self::assertNotContains('monolog.logger', $references);
 
         $transformers = array_filter($container->getDefinitions(), static fn ($definition): bool => RequestTransformer::class === $definition->getClass());
         self::assertCount(1, $transformers);
