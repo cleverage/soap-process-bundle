@@ -2,6 +2,7 @@ Latest
 ------
 
 ### Changes
+* [#43](https://github.com/cleverage/soap-process-bundle/issues/43) CI: test the lowest versions allowed by `composer.json` (`--prefer-lowest`, PHP 8.2). Require `psr/log` `^2|^3`: the loggers (of the tests, and `TaskLogger` of `cleverage/process-bundle`) use the typed `LoggerInterface` signatures of `psr/log` 2+, a fatal error with `psr/log` 1.
 * [#41](https://github.com/cleverage/soap-process-bundle/issues/41) Add a `.gitattributes`: the development files (`.docker/`, `.github/`, `tests/`, quality tools and PHPUnit configurations, `Makefile`) are no longer part of the archive installed by Composer (`dist`).
 * [#38](https://github.com/cleverage/soap-process-bundle/issues/38) Require `psr/log`, used directly by `Client` and `RequestTask` but only installed through `cleverage/process-bundle`.
 
