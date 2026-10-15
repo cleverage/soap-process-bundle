@@ -23,6 +23,7 @@ use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 #[CoversClass(RequestTransformer::class)]
 #[CoversTrait(SoapCallOptionsTrait::class)]
@@ -41,8 +42,8 @@ class RequestTransformerTest extends TestCase
         $this->soapClient = new FakeSoapClient(['GetBook' => 'xsi:type="xsd:string">It', 'IsAvailable' => 'xsi:type="xsd:boolean">false']);
         $this->client = new Client(new NullLogger(), 'test', null);
         $this->client->setSoapClient($this->soapClient);
-        $registry = new ClientRegistry();
-        $registry->addClient($this->client);
+        $client = $this->client;
+        $registry = new ClientRegistry(new ServiceLocator(['test' => static fn (): Client => $client]));
         $this->transformer = new RequestTransformer($registry);
     }
 

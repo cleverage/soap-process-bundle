@@ -13,18 +13,26 @@ declare(strict_types=1);
 
 namespace CleverAge\SoapProcessBundle\Tests\DependencyInjection;
 
+use CleverAge\SoapProcessBundle\Attribute\AsSoapClient;
 use CleverAge\SoapProcessBundle\DependencyInjection\CleverAgeSoapProcessExtension;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Task\RequestTask;
+use CleverAge\SoapProcessBundle\Tests\Fixtures\AttributedClient;
 use CleverAge\SoapProcessBundle\Transformer\RequestTransformer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Compiler\AttributeAutoconfigurationPass;
+use Symfony\Component\DependencyInjection\Compiler\ResolveChildDefinitionsPass;
+use Symfony\Component\DependencyInjection\Compiler\ResolveInstanceofConditionalsPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 #[CoversClass(CleverAgeSoapProcessExtension::class)]
 #[UsesClass(RequestTransformer::class)]
+#[CoversClass(AsSoapClient::class)]
+#[UsesClass(ClientRegistry::class)]
 class CleverAgeSoapProcessExtensionTest extends TestCase
 {
     public function testServices(): void
@@ -33,6 +41,21 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
         (new CleverAgeSoapProcessExtension())->load([], $container);
 
         self::assertSame(ClientRegistry::class, $container->getDefinition('cleverage_soap_process.registry.client')->getClass());
+        // Autowirable by its class name
+        self::assertSame('cleverage_soap_process.registry.client', (string) $container->getAlias(ClientRegistry::class));
+    }
+
+    public function testAsSoapClientAttributeRegistersTheCode(): void
+    {
+        $container = new ContainerBuilder();
+        (new CleverAgeSoapProcessExtension())->load([], $container);
+        $container->setDefinition('app.attributed', (new Definition(AttributedClient::class))->setAutoconfigured(true));
+
+        (new AttributeAutoconfigurationPass())->process($container);
+        (new ResolveInstanceofConditionalsPass())->process($container);
+        (new ResolveChildDefinitionsPass())->process($container);
+
+        self::assertSame([['code' => 'app_attributed']], $container->getDefinition('app.attributed')->getTag('cleverage.soap.client'));
     }
 
     public function testTaskIsRegistered(): void

@@ -15,30 +15,59 @@ namespace CleverAge\SoapProcessBundle\Registry;
 
 use CleverAge\SoapProcessBundle\Client\ClientInterface;
 use CleverAge\SoapProcessBundle\Exception\MissingClientException;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 /**
- * Holds all tagged soap client services.
+ * Holds the SOAP clients, indexed by code.
+ *
+ * The client services are fetched lazily from a service locator indexed by code (`code` attribute of the
+ * `cleverage.soap.client` tag, or `#[AsSoapClient]`, see RegisterClientsPass): a client is only instantiated when it
+ * is used.
  *
  * @author Madeline Veyrenc <mveyrenc@clever-age.com>
  */
 class ClientRegistry
 {
-    /** @var ClientInterface[] */
+    /**
+     * Clients already fetched from the locator, and the ones registered with addClient() (deprecated).
+     *
+     * @var array<string, ClientInterface>
+     */
     private array $clients = [];
 
-    /** @var array<string, string|null> Service ids of the clients, indexed by code */
+    /** @var array<string, string|null> Service ids of the clients registered with addClient(), indexed by code */
     private array $serviceIds = [];
 
     /**
+     * @param ServiceProviderInterface<mixed>|null $locator Client services, checked when fetched
+     */
+    public function __construct(
+        private readonly ?ServiceProviderInterface $locator = null,
+    ) {
+    }
+
+    /**
      * @param string|null $serviceId Id of the client service, used to identify the clients with the same code
+     *
+     * @deprecated since 3.3, tag the client service with a "code" attribute or use #[AsSoapClient] instead
      */
     public function addClient(ClientInterface $client, ?string $serviceId = null): void
     {
         $code = $client->getCode();
-        if (\array_key_exists($code, $this->getClients())) {
+        trigger_deprecation(
+            'cleverage/soap-process-bundle',
+            '3.3',
+            'Registering the SOAP client "%s" (%s) with "%s()" is deprecated, tag its service with a "code" attribute ({ name: cleverage.soap.client, code: %s }) or use the #[AsSoapClient] attribute instead, so that it is only instantiated when used. It will be required in 4.0.',
+            $code,
+            $client::class,
+            __METHOD__,
+            $code,
+        );
+        if ($this->hasClient($code)) {
             $message = "Client {$code} is already defined";
-            if (null !== $this->serviceIds[$code] && null !== $serviceId) {
-                $message .= " by service \"{$this->serviceIds[$code]}\", cannot register service \"{$serviceId}\"";
+            $definedBy = $this->serviceIds[$code] ?? null;
+            if (null !== $definedBy && null !== $serviceId) {
+                $message .= " by service \"{$definedBy}\", cannot register service \"{$serviceId}\"";
             }
 
             throw new \UnexpectedValueException($message);
@@ -48,10 +77,16 @@ class ClientRegistry
     }
 
     /**
-     * @return ClientInterface[]
+     * Instantiates every client of the locator.
+     *
+     * @return array<string, ClientInterface>
      */
     public function getClients(): array
     {
+        foreach (array_keys($this->locator?->getProvidedServices() ?? []) as $code) {
+            $this->getClient((string) $code);
+        }
+
         return $this->clients;
     }
 
@@ -60,15 +95,26 @@ class ClientRegistry
      */
     public function getClient(string $code): ClientInterface
     {
-        if (!$this->hasClient($code)) {
+        if (isset($this->clients[$code])) {
+            return $this->clients[$code];
+        }
+        if (!$this->locator?->has($code)) {
             throw MissingClientException::create($code);
         }
 
-        return $this->getClients()[$code];
+        $client = $this->locator->get($code);
+        if (!$client instanceof ClientInterface) {
+            throw new \UnexpectedValueException(\sprintf('The service of the SOAP client "%s" must implement "%s".', $code, ClientInterface::class));
+        }
+        if ($code !== $client->getCode()) {
+            throw new \UnexpectedValueException(\sprintf('The SOAP client "%s" is registered with the code "%s" but its getCode() method returns "%s": both must be the same.', $client::class, $code, $client->getCode()));
+        }
+
+        return $this->clients[$code] = $client;
     }
 
     public function hasClient(string $code): bool
     {
-        return \array_key_exists($code, $this->getClients());
+        return isset($this->clients[$code]) || ($this->locator?->has($code) ?? false);
     }
 }

@@ -22,8 +22,9 @@ CleverAge\SoapProcessBundle\CleverAgeSoapProcessBundle::class => ['all' => true]
 
 ## Configuration
 
-The bundle has no configuration. Declare at least one SOAP client as a service tagged `cleverage.soap.client`, its
-`code` is then used by the `client` option of the task and the transformer (see [Client](reference/client.md)):
+The bundle has no configuration. Declare at least one SOAP client as a service tagged `cleverage.soap.client` with its
+`code` (or with the `#[AsSoapClient]` attribute), which is then used by the `client` option of the task and the
+transformer (see [Client](reference/client.md)):
 
 ```yaml
 # config/services.yaml
@@ -38,7 +39,7 @@ services:
                 exceptions: true
                 features: !php/const SOAP_SINGLE_ELEMENT_ARRAYS
         tags:
-            - { name: cleverage.soap.client }
+            - { name: cleverage.soap.client, code: country_info }
 ```
 
 The task is registered as a service (non-shared) and is used in your processes by its code, `soap_request` (e.g.
