@@ -31,7 +31,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 #[CoversClass(CleverAgeSoapProcessExtension::class)]
 #[UsesClass(RequestTransformer::class)]
-#[UsesClass(AsSoapClient::class)]
+#[CoversClass(AsSoapClient::class)]
+#[UsesClass(ClientRegistry::class)]
 class CleverAgeSoapProcessExtensionTest extends TestCase
 {
     public function testServices(): void
