@@ -28,6 +28,7 @@ use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 #[CoversClass(RequestTask::class)]
@@ -150,8 +151,8 @@ class RequestTaskTest extends TestCase
      */
     private function createTask(array $options): array
     {
-        $registry = new ClientRegistry();
-        $registry->addClient($this->client);
+        $client = $this->client;
+        $registry = new ClientRegistry(new ServiceLocator(['test' => static fn (): Client => $client]));
 
         $processConfiguration = new ProcessConfiguration('test', []);
         $state = new ProcessState($processConfiguration, new ProcessHistory($processConfiguration));

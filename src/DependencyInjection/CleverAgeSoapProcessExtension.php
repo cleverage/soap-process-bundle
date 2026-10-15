@@ -13,7 +13,9 @@ declare(strict_types=1);
 
 namespace CleverAge\SoapProcessBundle\DependencyInjection;
 
+use CleverAge\SoapProcessBundle\Attribute\AsSoapClient;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -29,6 +31,13 @@ class CleverAgeSoapProcessExtension extends Extension
     public function load(array $configs, ContainerBuilder $container): void
     {
         $this->findServices($container, __DIR__.'/../../config/services');
+
+        $container->registerAttributeForAutoconfiguration(
+            AsSoapClient::class,
+            static function (ChildDefinition $definition, AsSoapClient $attribute): void {
+                $definition->addTag('cleverage.soap.client', ['code' => $attribute->code]);
+            }
+        );
     }
 
     /**
