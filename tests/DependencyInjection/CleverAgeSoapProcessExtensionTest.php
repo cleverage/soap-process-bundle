@@ -18,11 +18,13 @@ use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Task\RequestTask;
 use CleverAge\SoapProcessBundle\Transformer\RequestTransformer;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 #[CoversClass(CleverAgeSoapProcessExtension::class)]
+#[UsesClass(RequestTransformer::class)]
 class CleverAgeSoapProcessExtensionTest extends TestCase
 {
     public function testServices(): void
