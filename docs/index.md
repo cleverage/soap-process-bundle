@@ -41,6 +41,19 @@ services:
             - { name: cleverage.soap.client }
 ```
 
+The task is registered as a service (non-shared) and is used in your processes by its code, `soap_request` (e.g.
+`task: soap_request`, requires `cleverage/process-bundle` 5.4 or later, see its
+[task definition](https://github.com/cleverage/process-bundle/blob/main/docs/reference/02-task_definition.md)).
+Referencing it by its class name (`service: '@CleverAge\SoapProcessBundle\Task\RequestTask'`) is deprecated since
+`cleverage/process-bundle` 5.4.
+
+The transformer is tagged with its code, `soap_request` (the transformers and the tasks have separate codes): with
+`cleverage/process-bundle` 5.4 or later, it is loaded lazily, only when a process uses it.
+
+The service id of the task and of the transformer is their class name. Fetching them directly from the service container
+is deprecated since 3.3 (they will be private in 4.0); their former ids, `cleverage_soap_process.task.request` and
+`cleverage_soap_process.transformer.request`, are deprecated aliases since 3.3, removed in 4.0.
+
 ## Reference
 
 - [Client](reference/client.md)

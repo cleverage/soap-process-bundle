@@ -1,13 +1,22 @@
 services:
-    cleverage_soap_process.task.request:
-        class: CleverAge\SoapProcessBundle\Task\RequestTask
-        public: false
+    _defaults:
+        # Public for the direct access from the service container, deprecated since 3.3: private in 4.0
+        public: true
+        tags:
+            - { name: container.private, package: cleverage/soap-process-bundle, version: '3.3' }
+
+    CleverAge\SoapProcessBundle\Task\RequestTask:
         shared: false
         arguments:
             - '@logger'
             - '@cleverage_soap_process.registry.client'
         tags:
+            - { name: cleverage.task, code: soap_request }
             - { name: monolog.logger, channel: cleverage_process_task }
-    CleverAge\SoapProcessBundle\Task\RequestTask:
-        alias: cleverage_soap_process.task.request
-        public: true
+    cleverage_soap_process.task.request:
+        alias: CleverAge\SoapProcessBundle\Task\RequestTask
+        public: false
+        deprecated:
+            package: cleverage/soap-process-bundle
+            version: '3.3'
+            message: 'The "%alias_id%" service alias is deprecated, use the "soap_request" task code or the class name of the task instead. It will be removed in 4.0.'

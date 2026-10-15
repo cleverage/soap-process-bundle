@@ -1,11 +1,21 @@
 services:
-    cleverage_soap_process.transformer.request:
-        class: CleverAge\SoapProcessBundle\Transformer\RequestTransformer
-        public: false
+    _defaults:
+        # Public for the direct access from the service container, deprecated since 3.3: private in 4.0
+        public: true
+        tags:
+            - { name: container.private, package: cleverage/soap-process-bundle, version: '3.3' }
+
+    CleverAge\SoapProcessBundle\Transformer\RequestTransformer:
         arguments:
             - '@cleverage_soap_process.registry.client'
         tags:
-            - { name: cleverage.transformer }
+            # The code is the one returned by RequestTransformer::getCode(): the transformer is loaded lazily
+            - { name: cleverage.transformer, code: soap_request }
             - { name: monolog.logger, channel: cleverage_process_transformer }
-    CleverAge\SoapProcessBundle\Transformer\RequestTransformer:
-        alias: cleverage_soap_process.transformer.request
+    cleverage_soap_process.transformer.request:
+        alias: CleverAge\SoapProcessBundle\Transformer\RequestTransformer
+        public: false
+        deprecated:
+            package: cleverage/soap-process-bundle
+            version: '3.3'
+            message: 'The "%alias_id%" service alias is deprecated, use the "soap_request" transformer code or the class name of the transformer instead. It will be removed in 4.0.'
