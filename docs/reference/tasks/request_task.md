@@ -7,6 +7,7 @@ Task reference
 --------------
 
 * **Service**: `CleverAge\SoapProcessBundle\Task\RequestTask`
+* **Code**: `soap_request` (`task: soap_request`)
 
 Accepted inputs
 ---------------
@@ -54,7 +55,7 @@ Examples
 ```yaml
 # Task configuration level
 list_countries:
-  service: '@CleverAge\SoapProcessBundle\Task\RequestTask'
+  task: soap_request
   options:
     client: country_info
     method: FullCountryInfoAllCountries
@@ -67,7 +68,7 @@ list_countries:
 ```yaml
 # Task configuration level
 get_order:
-  service: '@CleverAge\SoapProcessBundle\Task\RequestTask'
+  task: soap_request
   error_strategy: skip
   options:
     client: legacy_erp

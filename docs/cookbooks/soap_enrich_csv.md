@@ -21,13 +21,13 @@ clever_age_process:
             description: 'Add the capital city and currency of each country'
             tasks:
                 read:
-                    service: '@CleverAge\ProcessBundle\Task\File\Csv\CsvReaderTask'
+                    task: csv_reader
                     options:
                         file_path: '%kernel.project_dir%/var/data/countries.csv'
                     outputs: [build_arguments]
 
                 build_arguments:
-                    service: '@CleverAge\ProcessBundle\Task\TransformerTask'
+                    task: transformer
                     options:
                         transformers:
                             mapping: # { parameters: { sCountryISOCode: FR } }
@@ -40,7 +40,7 @@ clever_age_process:
                     outputs: [get_country]
 
                 get_country:
-                    service: '@CleverAge\SoapProcessBundle\Task\RequestTask'
+                    task: soap_request
                     error_strategy: skip
                     options:
                         client: country_info
@@ -49,13 +49,13 @@ clever_age_process:
                     error_outputs: [log_error]
 
                 log_error:
-                    service: '@CleverAge\ProcessBundle\Task\Reporting\LoggerTask'
+                    task: logger
                     options:
                         level: warning
                         message: 'FullCountryInfo call failed, line skipped'
 
                 map_response:
-                    service: '@CleverAge\ProcessBundle\Task\TransformerTask'
+                    task: transformer
                     options:
                         transformers:
                             property_accessor:
@@ -75,7 +75,7 @@ clever_age_process:
                     outputs: [write]
 
                 write:
-                    service: '@CleverAge\ProcessBundle\Task\File\Csv\CsvWriterTask'
+                    task: csv_writer
                     options:
                         file_path: '%kernel.project_dir%/var/exports/countries_enriched_{date}.csv'
                         headers: [iso, name, capital, currency]
@@ -109,7 +109,7 @@ To add a single value to the line instead of replacing it, the SOAP call can als
 ```yaml
 # Task configuration level
 add_country_name:
-  service: '@CleverAge\ProcessBundle\Task\TransformerTask'
+  task: transformer
   options:
     transformers:
       mapping:

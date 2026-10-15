@@ -12,7 +12,7 @@ clever_age_process:
             description: 'Export the European countries from the CountryInfoService'
             tasks:
                 list_countries:
-                    service: '@CleverAge\SoapProcessBundle\Task\RequestTask'
+                    task: soap_request
                     error_strategy: stop
                     options:
                         client: country_info
@@ -20,7 +20,7 @@ clever_age_process:
                     outputs: [extract]
 
                 extract:
-                    service: '@CleverAge\ProcessBundle\Task\TransformerTask'
+                    task: transformer
                     options:
                         transformers:
                             property_accessor: # Get the list of countries from the stdClass response
@@ -48,11 +48,11 @@ clever_age_process:
                     outputs: [iterate]
 
                 iterate:
-                    service: '@CleverAge\ProcessBundle\Task\InputIteratorTask'
+                    task: input_iterator
                     outputs: [write]
 
                 write:
-                    service: '@CleverAge\ProcessBundle\Task\File\Csv\CsvWriterTask'
+                    task: csv_writer
                     options:
                         file_path: '%kernel.project_dir%/var/exports/european_countries_{date}.csv'
                         headers: [iso_code, name, capital, phone_code, currency]
