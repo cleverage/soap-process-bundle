@@ -17,6 +17,9 @@ use CleverAge\SoapProcessBundle\DependencyInjection\Compiler\RegisterClientsPass
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+/**
+ * @final since 3.3
+ */
 class CleverAgeSoapProcessBundle extends Bundle
 {
     /**

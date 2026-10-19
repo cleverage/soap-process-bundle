@@ -27,6 +27,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *     'soap_call_options': array<mixed>|null,
  *     'soap_call_headers': array<\SoapHeader>|null,
  *  }
+ *
+ * @final since 3.3
  */
 class RequestTask extends AbstractConfigurableTask
 {
