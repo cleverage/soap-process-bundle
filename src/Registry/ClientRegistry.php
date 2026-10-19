@@ -25,6 +25,8 @@ use Symfony\Contracts\Service\ServiceProviderInterface;
  * is used.
  *
  * @author Madeline Veyrenc <mveyrenc@clever-age.com>
+ *
+ * @final since 3.3
  */
 class ClientRegistry
 {
