@@ -45,7 +45,7 @@ class CleverAgeSoapProcessBundleTest extends TestCase
         $container->setDefinition('cleverage_soap_process.registry.client', new Definition(ClientRegistry::class))
             ->setPublic(true);
         $container->setDefinition('app.client', new Definition(Client::class, [new Definition(NullLogger::class), 'test', null]))
-            ->addTag('cleverage.soap.client');
+            ->addTag('cleverage.soap.client', ['code' => 'test']);
         $container->compile(true);
 
         /** @var ClientRegistry $registry */
