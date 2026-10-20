@@ -15,6 +15,7 @@ namespace CleverAge\SoapProcessBundle\Registry;
 
 use CleverAge\SoapProcessBundle\Client\ClientInterface;
 use CleverAge\SoapProcessBundle\Exception\MissingClientException;
+use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 
 /**
@@ -72,7 +73,7 @@ class ClientRegistry
                 $message .= " by service \"{$definedBy}\", cannot register service \"{$serviceId}\"";
             }
 
-            throw new \UnexpectedValueException($message);
+            throw new UnexpectedValueException($message);
         }
         $this->clients[$code] = $client;
         $this->serviceIds[$code] = $serviceId;
@@ -106,10 +107,10 @@ class ClientRegistry
 
         $client = $this->locator->get($code);
         if (!$client instanceof ClientInterface) {
-            throw new \UnexpectedValueException(\sprintf('The service of the SOAP client "%s" must implement "%s".', $code, ClientInterface::class));
+            throw new UnexpectedValueException(\sprintf('The service of the SOAP client "%s" must implement "%s".', $code, ClientInterface::class));
         }
         if ($code !== $client->getCode()) {
-            throw new \UnexpectedValueException(\sprintf('The SOAP client "%s" is registered with the code "%s" but its getCode() method returns "%s": both must be the same.', $client::class, $code, $client->getCode()));
+            throw new UnexpectedValueException(\sprintf('The SOAP client "%s" is registered with the code "%s" but its getCode() method returns "%s": both must be the same.', $client::class, $code, $client->getCode()));
         }
 
         return $this->clients[$code] = $client;

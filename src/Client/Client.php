@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace CleverAge\SoapProcessBundle\Client;
 
+use CleverAge\SoapProcessBundle\Exception\InvalidArgumentException;
+use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -61,7 +63,7 @@ class Client implements ClientInterface
     public function getCode(): string
     {
         if ('' === $this->code || '0' === $this->code) {
-            throw new \UnexpectedValueException('Client code is not defined');
+            throw new UnexpectedValueException('Client code is not defined');
         }
 
         return $this->code;
@@ -187,7 +189,7 @@ class Client implements ClientInterface
     protected function doSoapCall(string $method, array $input = []): mixed
     {
         if (!$this->getSoapClient() instanceof \SoapClient) {
-            throw new \InvalidArgumentException('Soap client is not initialized');
+            throw new InvalidArgumentException('Soap client is not initialized');
         }
         try {
             $result = $this->getSoapClient()->__soapCall($method, $input, $this->getSoapOptions(), $this->getSoapHeaders());
