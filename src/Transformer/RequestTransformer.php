@@ -15,6 +15,8 @@ namespace CleverAge\SoapProcessBundle\Transformer;
 
 use CleverAge\ProcessBundle\Transformer\ConfigurableTransformerInterface;
 use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
+use CleverAge\SoapProcessBundle\Exception\RuntimeException;
+use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,7 +44,7 @@ class RequestTransformer implements ConfigurableTransformerInterface
     public function transform(mixed $value, array $options = []): mixed
     {
         if (!\is_array($value)) {
-            throw new \UnexpectedValueException('Expecting an array of value');
+            throw new UnexpectedValueException('Expecting an array of value');
         }
 
         $resolver = new OptionsResolver();
@@ -55,7 +57,7 @@ class RequestTransformer implements ConfigurableTransformerInterface
         try {
             return $this->callWithSoapOptions($client, $options['method'], $value, $options['soap_call_options'], $options['soap_call_headers']);
         } catch (\SoapFault $e) {
-            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
+            throw new RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
         }
     }
 

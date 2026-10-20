@@ -16,6 +16,8 @@ namespace CleverAge\SoapProcessBundle\Task;
 use CleverAge\ProcessBundle\Model\AbstractConfigurableTask;
 use CleverAge\ProcessBundle\Model\ProcessState;
 use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
+use CleverAge\SoapProcessBundle\Exception\RuntimeException;
+use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -47,7 +49,7 @@ class RequestTask extends AbstractConfigurableTask
 
         $input = $state->getInput() ?: [];
         if (!\is_array($input)) {
-            throw new \UnexpectedValueException(\sprintf('RequestTask expects an array or empty input, %s given', get_debug_type($input)));
+            throw new UnexpectedValueException(\sprintf('RequestTask expects an array or empty input, %s given', get_debug_type($input)));
         }
 
         try {
@@ -66,7 +68,7 @@ class RequestTask extends AbstractConfigurableTask
 
             // The process manager applies the error strategy: the process fails with "stop", the error outputs
             // receive the task input with "skip"
-            throw new \RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
+            throw new RuntimeException(\sprintf("Soap call '%s' on client '%s' failed", $options['method'], $options['client']), 0, $e);
         }
 
         $state->setOutput($result);
