@@ -15,6 +15,7 @@ namespace CleverAge\SoapProcessBundle\Tests\DependencyInjection;
 
 use CleverAge\SoapProcessBundle\Attribute\AsSoapClient;
 use CleverAge\SoapProcessBundle\DependencyInjection\CleverAgeSoapProcessExtension;
+use CleverAge\SoapProcessBundle\DependencyInjection\Configuration;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Task\RequestTask;
 use CleverAge\SoapProcessBundle\Tests\Fixtures\AttributedClient;
@@ -31,6 +32,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Yaml\Yaml;
 
 #[CoversClass(CleverAgeSoapProcessExtension::class)]
+#[CoversClass(Configuration::class)]
 #[UsesClass(RequestTransformer::class)]
 #[CoversClass(AsSoapClient::class)]
 #[UsesClass(ClientRegistry::class)]
@@ -165,5 +167,53 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
             ['package' => 'cleverage/soap-process-bundle', 'version' => '3.3', 'message' => $message],
             $alias->getDeprecation($id)
         );
+    }
+
+    public function testConfigurationKeysAreDeprecated(): void
+    {
+        $deprecations = $this->collectDeprecations(static function (): void {
+            (new CleverAgeSoapProcessExtension())->load([[], ['foo' => true], ['bar' => 1, 'foo' => false]], new ContainerBuilder());
+        });
+
+        self::assertSame(['Since cleverage/soap-process-bundle 3.3: Configuring "clever_age_soap_process" is deprecated, the bundle has no configuration: the keys "foo", "bar" are ignored. They will be rejected in 4.0.'], $deprecations);
+    }
+
+    public function testNoDeprecationWithoutConfigurationKey(): void
+    {
+        $deprecations = $this->collectDeprecations(static function (): void {
+            (new CleverAgeSoapProcessExtension())->load([[], []], new ContainerBuilder());
+        });
+
+        self::assertSame([], $deprecations);
+    }
+
+    public function testConfigurationHasNoOption(): void
+    {
+        $configuration = (new CleverAgeSoapProcessExtension())->getConfiguration([], new ContainerBuilder());
+
+        self::assertInstanceOf(Configuration::class, $configuration);
+        self::assertSame('clever_age_soap_process', $configuration->getConfigTreeBuilder()->buildTree()->getName());
+    }
+
+    /**
+     * @param callable(): void $callback
+     *
+     * @return list<string>
+     */
+    private function collectDeprecations(callable $callback): array
+    {
+        $deprecations = [];
+        set_error_handler(static function (int $errno, string $errstr) use (&$deprecations): bool {
+            $deprecations[] = $errstr;
+
+            return true;
+        }, \E_USER_DEPRECATED);
+        try {
+            $callback();
+        } finally {
+            restore_error_handler();
+        }
+
+        return $deprecations;
     }
 }
