@@ -27,7 +27,7 @@ final class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('clever_age_soap_process');
+        $treeBuilder = new TreeBuilder('cleverage_soap_process');
         /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
         $rootNode->ignoreExtraKeys();

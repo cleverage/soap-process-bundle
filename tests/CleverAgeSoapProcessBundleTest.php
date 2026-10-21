@@ -15,6 +15,7 @@ namespace CleverAge\SoapProcessBundle\Tests;
 
 use CleverAge\SoapProcessBundle\CleverAgeSoapProcessBundle;
 use CleverAge\SoapProcessBundle\Client\Client;
+use CleverAge\SoapProcessBundle\DependencyInjection\CleverAgeSoapProcessExtension;
 use CleverAge\SoapProcessBundle\DependencyInjection\Compiler\RegisterClientsPass;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -25,6 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 #[CoversClass(CleverAgeSoapProcessBundle::class)]
+#[UsesClass(CleverAgeSoapProcessExtension::class)]
 #[UsesClass(RegisterClientsPass::class)]
 #[UsesClass(ClientRegistry::class)]
 #[UsesClass(Client::class)]
@@ -51,5 +53,16 @@ class CleverAgeSoapProcessBundleTest extends TestCase
         /** @var ClientRegistry $registry */
         $registry = $container->get('cleverage_soap_process.registry.client');
         self::assertSame('test', $registry->getClient('test')->getCode());
+    }
+
+    public function testExtensionAlias(): void
+    {
+        $bundle = new CleverAgeSoapProcessBundle();
+        $extension = $bundle->getContainerExtension();
+
+        self::assertInstanceOf(CleverAgeSoapProcessExtension::class, $extension);
+        self::assertSame('cleverage_soap_process', $extension->getAlias());
+        // Built once
+        self::assertSame($extension, $bundle->getContainerExtension());
     }
 }

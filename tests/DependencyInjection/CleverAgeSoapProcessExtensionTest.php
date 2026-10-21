@@ -176,7 +176,7 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
             (new CleverAgeSoapProcessExtension())->load([[], ['foo' => true], ['bar' => 1, 'foo' => false]], new ContainerBuilder());
         });
 
-        self::assertSame(['Since cleverage/soap-process-bundle 3.3: Configuring "clever_age_soap_process" is deprecated, the bundle has no configuration: the keys "foo", "bar" are ignored. They will be rejected in 4.0.'], $deprecations);
+        self::assertSame(['Since cleverage/soap-process-bundle 3.3: Configuring "cleverage_soap_process" is deprecated, the bundle has no configuration: the keys "foo", "bar" are ignored. They will be rejected in 4.0.'], $deprecations);
     }
 
     public function testNoDeprecationWithoutConfigurationKey(): void
@@ -193,7 +193,7 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
         $configuration = (new CleverAgeSoapProcessExtension())->getConfiguration([], new ContainerBuilder());
 
         self::assertInstanceOf(Configuration::class, $configuration);
-        self::assertSame('clever_age_soap_process', $configuration->getConfigTreeBuilder()->buildTree()->getName());
+        self::assertSame('cleverage_soap_process', $configuration->getConfigTreeBuilder()->buildTree()->getName());
     }
 
     /**
