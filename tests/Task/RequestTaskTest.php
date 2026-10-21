@@ -20,6 +20,7 @@ use CleverAge\ProcessBundle\Model\ProcessHistory;
 use CleverAge\ProcessBundle\Model\ProcessState;
 use CleverAge\SoapProcessBundle\Client\Client;
 use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
+use CleverAge\SoapProcessBundle\Logger\SensitiveDataMasker;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Task\RequestTask;
 use CleverAge\SoapProcessBundle\Tests\Client\FakeSoapClient;
@@ -35,6 +36,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 #[CoversTrait(SoapCallOptionsTrait::class)]
 #[UsesClass(Client::class)]
 #[UsesClass(ClientRegistry::class)]
+#[UsesClass(SensitiveDataMasker::class)]
 class RequestTaskTest extends TestCase
 {
     /** @var list<array{level: string, message: string, context: array<mixed>}> */
@@ -126,6 +128,29 @@ class RequestTaskTest extends TestCase
         $headers = $this->client->getSoapHeaders();
         self::assertIsArray($headers);
         self::assertSame('ClientToken', $headers[0]->name);
+    }
+
+    /**
+     * The logs can be stored and displayed elsewhere (e.g. by the UI bundle, to every user): the SOAP headers and the
+     * credentials of the request must not be logged.
+     */
+    public function testCredentialsAreNotLogged(): void
+    {
+        [$task, $state] = $this->createTask(['method' => 'Fail', 'soap_call_headers' => ['AuthToken' => ['namespace' => 'urn:demo', 'data' => 'SECRET-TOKEN']]]);
+
+        try {
+            $task->execute($state);
+            self::fail('The task must fail');
+        } catch (\RuntimeException) {
+        }
+
+        self::assertStringContainsString('SECRET-TOKEN', $this->soapClient->requests[0]);
+        self::assertStringNotContainsString('SECRET', json_encode($this->logs, \JSON_THROW_ON_ERROR));
+        $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level']));
+        self::assertIsArray($errors[0]['context']['options']);
+        self::assertSame(['urn:demo AuthToken'], $errors[0]['context']['options']['soap_call_headers']);
+        self::assertIsString($errors[0]['context']['last_request']);
+        self::assertStringContainsString('<ns1:AuthToken>***</ns1:AuthToken>', $errors[0]['context']['last_request']);
     }
 
     public function testNonArrayInputIsRejected(): void

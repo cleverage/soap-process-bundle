@@ -15,6 +15,7 @@ namespace CleverAge\SoapProcessBundle\Tests\Transformer;
 
 use CleverAge\SoapProcessBundle\Client\Client;
 use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
+use CleverAge\SoapProcessBundle\Logger\SensitiveDataMasker;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use CleverAge\SoapProcessBundle\Tests\Client\FakeSoapClient;
 use CleverAge\SoapProcessBundle\Transformer\RequestTransformer;
@@ -28,6 +29,7 @@ use Symfony\Component\DependencyInjection\ServiceLocator;
 #[CoversClass(RequestTransformer::class)]
 #[CoversTrait(SoapCallOptionsTrait::class)]
 #[UsesClass(Client::class)]
+#[UsesClass(SensitiveDataMasker::class)]
 #[UsesClass(ClientRegistry::class)]
 class RequestTransformerTest extends TestCase
 {

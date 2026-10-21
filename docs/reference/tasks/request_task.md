@@ -89,9 +89,10 @@ Notes
 -----
 
 * When the call fails (the client throws a `SoapFault`, see [client](../client.md)), the task logs an error
-  `Soap call failed`, with the options, the fault message and the last request and response in the log
-  context, then throws a `RuntimeException` (`Soap call '<method>' on client '<client>' failed`, with the `SoapFault`
-  as previous exception), handled by the `error_strategy`:
+  `Soap call failed`, with the options (the `soap_call_headers` by their name only), the fault message and the last
+  request and response (credentials masked, see [client](../client.md)) in the log context, then throws a
+  `RuntimeException` (`Soap call '<method>' on client '<client>' failed`, with the `SoapFault` as previous exception),
+  handled by the `error_strategy`:
   - with `error_strategy: skip`, the `outputs` tasks are skipped and the `error_outputs` tasks receive the input of
     the task
   - with `error_strategy: stop`, the process fails and the console command returns an error code

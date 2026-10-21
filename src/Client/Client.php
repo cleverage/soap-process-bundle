@@ -15,6 +15,7 @@ namespace CleverAge\SoapProcessBundle\Client;
 
 use CleverAge\SoapProcessBundle\Exception\InvalidArgumentException;
 use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
+use CleverAge\SoapProcessBundle\Logger\SensitiveDataMasker;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -201,7 +202,7 @@ class Client implements ClientInterface
             $this->getLastRequestTrace();
             $this->getLogger()->alert(
                 \sprintf("Soap call '%s' on '%s' failed : %s", $method, $this->getWsdl(), $e->getMessage()),
-                $this->getLastRequestTraceArray()
+                SensitiveDataMasker::maskTrace($this->getLastRequestTraceArray())
             );
 
             throw $e;
@@ -212,7 +213,7 @@ class Client implements ClientInterface
         if (\array_key_exists('trace', $this->getOptions()) && $this->getOptions()['trace']) {
             $this->getLogger()->debug(
                 \sprintf("Trace of soap call '%s' on '%s'", $method, $this->getWsdl()),
-                $this->getLastRequestTraceArray()
+                SensitiveDataMasker::maskTrace($this->getLastRequestTraceArray())
             );
         }
 
