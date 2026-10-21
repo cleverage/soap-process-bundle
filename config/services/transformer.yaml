@@ -11,7 +11,6 @@ services:
         tags:
             # The code is the one returned by RequestTransformer::getCode(): the transformer is loaded lazily
             - { name: cleverage.transformer, code: soap_request }
-            - { name: monolog.logger, channel: cleverage_process_transformer }
     cleverage_soap_process.transformer.request:
         alias: CleverAge\SoapProcessBundle\Transformer\RequestTransformer
         public: false

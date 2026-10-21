@@ -118,7 +118,7 @@ class RequestTaskTest extends TestCase
         self::assertNull($state->getOutput());
         $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level']));
         self::assertCount(1, $errors);
-        self::assertSame('Empty resultset for query', $errors[0]['message']);
+        self::assertSame('Soap call failed', $errors[0]['message']);
         self::assertSame('Unknown method', $errors[0]['context']['message']);
         self::assertIsString($errors[0]['context']['last_response']);
         self::assertStringContainsString('Unknown method', $errors[0]['context']['last_response']);

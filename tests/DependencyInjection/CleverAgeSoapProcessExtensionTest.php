@@ -142,7 +142,8 @@ class CleverAgeSoapProcessExtensionTest extends TestCase
         // Public for the direct access from the service container, deprecated
         self::assertTrue($transformer->isPublic());
         self::assertSame([['package' => 'cleverage/soap-process-bundle', 'version' => '3.3']], $transformer->getTag('container.private'));
-        self::assertSame([['channel' => 'cleverage_process_transformer']], $transformer->getTag('monolog.logger'));
+        // No logger
+        self::assertFalse($transformer->hasTag('monolog.logger'));
         $arguments = $transformer->getArguments();
         self::assertCount(1, $arguments);
         self::assertInstanceOf(Reference::class, $arguments[0]);

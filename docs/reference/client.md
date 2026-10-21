@@ -150,3 +150,9 @@ Notes
   `setSoapHeaders()` (e.g. in the `calls` of the service definition) are used by every call. The
   [RequestTask](tasks/request_task.md) and the [RequestTransformer](transformers/request_transformer.md) set their
   own `soap_call_options` / `soap_call_headers` for their call only, then restore these values.
+* Being shared, a client keeps its state from one process execution to the next as long as the PHP process runs, e.g.
+  in a long-running worker (Messenger, [ui-process-bundle](https://github.com/cleverage/ui-process-bundle)): the
+  `SoapClient` (and so the WSDL, loaded once: `setWsdl()` has no effect after the first call), the options and headers
+  changed with `setSoapOptions()` / `setSoapHeaders()` and the last request and response traces (overwritten by each
+  call). The client is not reset between two executions: give the values specific to a call with the
+  `soap_call_options` / `soap_call_headers` options of the task or the transformer rather than by changing the client.

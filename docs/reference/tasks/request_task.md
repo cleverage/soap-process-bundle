@@ -89,7 +89,7 @@ Notes
 -----
 
 * When the call fails (the client throws a `SoapFault`, see [client](../client.md)), the task logs an error
-  `Empty resultset for query`, with the options, the fault message and the last request and response in the log
+  `Soap call failed`, with the options, the fault message and the last request and response in the log
   context, then throws a `RuntimeException` (`Soap call '<method>' on client '<client>' failed`, with the `SoapFault`
   as previous exception), handled by the `error_strategy`:
   - with `error_strategy: skip`, the `outputs` tasks are skipped and the `error_outputs` tasks receive the input of

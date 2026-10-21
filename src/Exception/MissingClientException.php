@@ -22,10 +22,7 @@ use CleverAge\ProcessBundle\Exception\ProcessExceptionInterface;
  */
 class MissingClientException extends \UnexpectedValueException implements ProcessExceptionInterface
 {
-    /**
-     * @param string $code
-     */
-    public static function create($code): self
+    public static function create(string $code): self
     {
         $errorStr = "No Soap client with code : {$code}";
 
