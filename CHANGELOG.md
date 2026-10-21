@@ -1,7 +1,12 @@
 Latest
 ------
 
+v3.3
+------
+
 ### Changes
+* Require `cleverage/process-bundle` `^5.4`.
+* Please follow [UPGRADE.md v3.3](UPGRADE.md#v33)
 * [#66](https://github.com/cleverage/soap-process-bundle/issues/66) RequestTask logs a failed call as `Soap call failed` instead of the misleading `Empty resultset for query` (same level and log context). Remove the `monolog.logger` tag of `RequestTransformer`, which has no logger. Type `MissingClientException::create(string $code)`. Document that a client, shared, keeps its state between two process executions in a long-running worker. Update documentation and tests.
 * [#64](https://github.com/cleverage/soap-process-bundle/issues/64) The configuration key of the bundle (its extension alias) is `cleverage_soap_process`, instead of `clever_age_soap_process` (no option could be configured there). Configuring a key under `cleverage_soap_process` is deprecated: the bundle has no configuration and the keys were ignored without notice (new internal `Configuration`, empty; notice when the container is compiled). They will be rejected in 4.0. Require `symfony/deprecation-contracts`, used directly. Update documentation, add tests.
 * [#62](https://github.com/cleverage/soap-process-bundle/issues/62) The bundle throws exceptions implementing `ProcessExceptionInterface` of the process bundle instead of raw SPL exceptions (as [cleverage/process-bundle#317](https://github.com/cleverage/process-bundle/issues/317)): new `Exception\UnexpectedValueException`, `Exception\InvalidArgumentException` and `Exception\RuntimeException`, extending the SPL exceptions thrown before (same messages, the existing `catch` keep working). Add tests.
