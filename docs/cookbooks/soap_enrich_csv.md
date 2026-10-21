@@ -100,7 +100,7 @@ How it works:
   [CsvWriterTask](https://github.com/cleverage/process-bundle/blob/main/docs/reference/tasks/csv_writer_task.md).
 
 Note that the error output of the RequestTask is its input (the SOAP arguments), not the CSV line: the details of the
-failed call (options, last request and response) are in the log context of the `Empty resultset for query` error
+failed call (options, last request and response) are in the log context of the `Soap call failed` error
 logged by the task.
 
 To add a single value to the line instead of replacing it, the SOAP call can also be done inside a `mapping` with the

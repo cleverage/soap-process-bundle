@@ -64,7 +64,7 @@ class RequestTask extends AbstractConfigurableTask
                 'last_response_headers' => $client->getLastResponseHeaders(),
             ];
 
-            $this->logger->error('Empty resultset for query', $logContext);
+            $this->logger->error('Soap call failed', $logContext);
 
             // The process manager applies the error strategy: the process fails with "stop", the error outputs
             // receive the task input with "skip"
