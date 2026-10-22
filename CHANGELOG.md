@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Fixes
+* [#73](https://github.com/cleverage/soap-process-bundle/issues/73) `RequestTransformer` is a private service again, as in 3.2: 3.3 made it public by mistake, with the deprecation of a direct access from the service container that never existed. `UPGRADE.md` (3.3) only mentions the task. Update tests.
+
 v3.3.1
 ------
 

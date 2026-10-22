@@ -1,9 +1,7 @@
 services:
     _defaults:
-        # Public for the direct access from the service container, deprecated since 3.3: private in 4.0
-        public: true
-        tags:
-            - { name: container.private, package: cleverage/soap-process-bundle, version: '3.3' }
+        # Private, as in 3.2: the transformers are fetched by their code
+        public: false
 
     CleverAge\SoapProcessBundle\Transformer\RequestTransformer:
         arguments:
