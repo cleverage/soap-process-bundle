@@ -1,10 +1,26 @@
 CleverAge/SoapProcessBundle
 =======================
 
+[![Test](https://github.com/cleverage/soap-process-bundle/actions/workflows/test.yml/badge.svg)](https://github.com/cleverage/soap-process-bundle/actions/workflows/test.yml)
+[![Packagist Version](https://img.shields.io/packagist/v/cleverage/soap-process-bundle)](https://packagist.org/packages/cleverage/soap-process-bundle)
+[![License](https://img.shields.io/packagist/l/cleverage/soap-process-bundle)](LICENSE)
+
 This bundle is a part of the [CleverAge/ProcessBundle](https://github.com/cleverage/process-bundle) project. 
-It provides [Soap](https://fr.wikipedia.org/wiki/SOAP) integration on Process bundle.
+It provides [Soap](https://en.wikipedia.org/wiki/SOAP) integration on Process bundle.
 
 Compatible with [Symfony stable version and latest Long-Term Support (LTS) release](https://symfony.com/releases).
+
+## Installation
+
+```bash
+composer require cleverage/soap-process-bundle
+```
+
+Without Symfony Flex, register the bundle in `config/bundles.php`:
+
+```php
+CleverAge\SoapProcessBundle\CleverAgeSoapProcessBundle::class => ['all' => true],
+```
 
 ## Documentation
 
