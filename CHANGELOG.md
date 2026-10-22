@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Fixes
+* [GHSA-g893-3vww-cm9q](https://github.com/cleverage/soap-process-bundle/security/advisories/GHSA-g893-3vww-cm9q) `Client`, `RequestTask`: mask the credentials in the logged traces (HTTP headers such as `Authorization` and XML elements such as `wsse:Password` whose name contains `authorization`, `cookie`, `password`, `secret`, `token`, `api_key`, `signature`, `credential` or `session` are replaced by `***`); the `soap_call_headers` of the task are logged by their name only.
+
 v3.3
 ------
 

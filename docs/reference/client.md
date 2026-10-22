@@ -146,6 +146,10 @@ Notes
   `soapCall<Method>()` override. When the call fails with a `SoapFault`, the error is logged at `alert` level, with the
   last request and response in the log context, then the `SoapFault` is thrown. With the `exceptions: false` option,
   `SoapClient` returns the `SoapFault` instead of throwing it: it is handled the same way.
+* The credentials are masked (`***`) in the logged requests and responses: the value of the HTTP headers (e.g.
+  `Authorization` of the `login` / `password` options, `Cookie`, `Set-Cookie`) and the text of the XML elements (e.g.
+  `wsse:Password`, `apiKey`) whose name contains `authorization`, `cookie`, `password`, `secret`, `token`, `api_key`,
+  `signature`, `credential` or `session` (case-insensitive). Other call parameters are logged as is.
 * A client service is shared by default: the SOAP options and headers set with `setSoapOptions()` /
   `setSoapHeaders()` (e.g. in the `calls` of the service definition) are used by every call. The
   [RequestTask](tasks/request_task.md) and the [RequestTransformer](transformers/request_transformer.md) set their

@@ -18,6 +18,7 @@ use CleverAge\ProcessBundle\Model\ProcessState;
 use CleverAge\SoapProcessBundle\Client\SoapCallOptionsTrait;
 use CleverAge\SoapProcessBundle\Exception\RuntimeException;
 use CleverAge\SoapProcessBundle\Exception\UnexpectedValueException;
+use CleverAge\SoapProcessBundle\Logger\SensitiveDataMasker;
 use CleverAge\SoapProcessBundle\Registry\ClientRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -55,13 +56,14 @@ class RequestTask extends AbstractConfigurableTask
         try {
             $result = $this->callWithSoapOptions($client, $options['method'], $input, $options['soap_call_options'], $options['soap_call_headers']);
         } catch (\SoapFault $e) {
+            // The credentials (HTTP authentication, WS-Security...) are masked: the logs can be displayed elsewhere
             $logContext = [
-                'options' => $options,
+                'options' => SensitiveDataMasker::maskOptions($options),
                 'message' => $e->getMessage(),
-                'last_request' => $client->getLastRequest(),
-                'last_request_headers' => $client->getLastRequestHeaders(),
-                'last_response' => $client->getLastResponse(),
-                'last_response_headers' => $client->getLastResponseHeaders(),
+                'last_request' => SensitiveDataMasker::maskXml($client->getLastRequest()),
+                'last_request_headers' => SensitiveDataMasker::maskHttpHeaders($client->getLastRequestHeaders()),
+                'last_response' => SensitiveDataMasker::maskXml($client->getLastResponse()),
+                'last_response_headers' => SensitiveDataMasker::maskHttpHeaders($client->getLastResponseHeaders()),
             ];
 
             $this->logger->error('Soap call failed', $logContext);

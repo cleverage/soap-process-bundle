@@ -14,11 +14,14 @@ declare(strict_types=1);
 namespace CleverAge\SoapProcessBundle\Tests\Client;
 
 use CleverAge\SoapProcessBundle\Client\Client;
+use CleverAge\SoapProcessBundle\Logger\SensitiveDataMasker;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 
 #[CoversClass(Client::class)]
+#[UsesClass(SensitiveDataMasker::class)]
 class ClientTest extends TestCase
 {
     /** @var list<string> */
