@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Changes
+* [#79](https://github.com/cleverage/soap-process-bundle/issues/79) Documentation: SOAP call options restored after the call, exceptions of the bundle in the reference pages.
+
 v3.3.1
 ------
 

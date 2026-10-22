@@ -34,8 +34,8 @@ Arguments of the `CleverAge\SoapProcessBundle\Client\Client` base class:
 Setters
 -------
 
-These values can be set with `calls` in the service definition. Note that the [RequestTask](tasks/request_task.md)
-overwrites the SOAP call options and headers each time it is executed (see Notes).
+These values can be set with `calls` in the service definition. The [RequestTask](tasks/request_task.md) uses its own
+SOAP call options and headers for its call only: the values of the client are restored afterwards (see Notes).
 
 | Method                                  | Description                                                                                                                                                            |
 |-----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -128,11 +128,11 @@ Notes
 * The clients are registered by the `code` attribute of their tag, in a service locator built when the container is
   compiled: a client is only instantiated when a task or the transformer uses it (an error in a client that a process
   does not use does not make it fail). The `code` must be the one returned by `getCode()` (an
-  `\UnexpectedValueException` is thrown otherwise when it is fetched). Two clients with the same code, or an empty
+  `UnexpectedValueException` is thrown otherwise when it is fetched). Two clients with the same code, or an empty
   code, fail the container compilation.
 * **Deprecated**: a service tagged without `code` is still registered, with `ClientRegistry::addClient()`, instantiated
   with the registry (deprecated since 3.3, the `code` will be required in 4.0). Two clients with the same code then
-  throw an `\UnexpectedValueException` giving the ids of both services
+  throw an `UnexpectedValueException` giving the ids of both services
   (`Client <code> is already defined by service "<id>", cannot register service "<id>"`) when the registry is
   instantiated, i.e. when the first SOAP task or transformer service is built.
 * Using a code that is not registered throws a `CleverAge\SoapProcessBundle\Exception\MissingClientException`
