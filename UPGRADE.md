@@ -1,6 +1,14 @@
 Upgrade Guide
 =============
 
+## v3.4
+
+### `RequestTransformer` service
+
+`CleverAge\SoapProcessBundle\Transformer\RequestTransformer` is a private service again, as in 3.2 (3.3 made it public
+by mistake, with a deprecation notice on a direct access). Fetching it from the service container fails: use the
+`soap_request` transformer code, or inject it.
+
 ## v3.3
 
 Unless stated otherwise, the deprecations below trigger a notice (`Since cleverage/soap-process-bundle 3.3: ...`) and
