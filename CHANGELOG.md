@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Changes
+* [#79](https://github.com/cleverage/soap-process-bundle/issues/79) Documentation: SOAP call options restored after the call, exceptions of the bundle in the reference pages.
+
 ### Fixes
 * [#73](https://github.com/cleverage/soap-process-bundle/issues/73) `RequestTransformer` is a private service again, as in 3.2: 3.3 made it public by mistake, with the deprecation of a direct access from the service container that never existed. `UPGRADE.md` (3.3) only mentions the task. Update tests.
 

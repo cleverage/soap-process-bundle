@@ -16,7 +16,7 @@ Accepted inputs
 [SoapClient::__soapCall()](https://www.php.net/manual/en/soapclient.soapcall.php). An empty input (`null`, `[]`, …)
 calls the method without argument.
 
-Any other non-empty input (e.g. a `string`) throws an `\UnexpectedValueException`.
+Any other non-empty input (e.g. a `string`) throws an `UnexpectedValueException`.
 
 For a document/literal service, the arguments of the method are usually wrapped in a single array, e.g.
 `{ parameters: { sCountryISOCode: FR } }` (in WSDL mode, the keys of the first level are ignored, only the order

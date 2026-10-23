@@ -16,7 +16,7 @@ Accepted inputs
 
 `array`: list of the arguments passed as `$args` to
 [SoapClient::__soapCall()](https://www.php.net/manual/en/soapclient.soapcall.php) (see the
-[RequestTask](../tasks/request_task.md#accepted-inputs)). Any other type throws an `\UnexpectedValueException`
+[RequestTask](../tasks/request_task.md#accepted-inputs)). Any other type throws an `UnexpectedValueException`
 (`Expecting an array of value`).
 
 Possible outputs

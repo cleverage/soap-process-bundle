@@ -69,3 +69,10 @@ No option can be configured under `cleverage_soap_process`: a key there is ignor
 
 - [Call a SOAP service and export the response](cookbooks/soap_call_and_export.md)
 - [Enrich a CSV file with a SOAP service](cookbooks/soap_enrich_csv.md)
+
+## Exceptions
+
+The exceptions named without namespace in the reference pages (e.g. `UnexpectedValueException`) are the ones of the
+bundle, `CleverAge\SoapProcessBundle\Exception\*`: they extend the SPL exceptions of the same name and implement
+`CleverAge\ProcessBundle\Exception\ProcessExceptionInterface`, so that all the errors of the process bundles can be
+caught at once.
