@@ -35,8 +35,8 @@ tasks:
 | `cleverage_soap_process.task.request`        | `RequestTask`        | `soap_request` |
 | `cleverage_soap_process.transformer.request` | `RequestTransformer` | `soap_request` |
 
-The service id of the task and the transformer is their class name. Fetching them from the service container
-(`$container->get()`) is deprecated: they will be private in 4.0.
+The service id of the task and the transformer is their class name. Fetching the task from the service container
+(`$container->get()`) is deprecated: it will be private in 4.0 (the transformer is private, as before).
 
 ### Client codes
 
