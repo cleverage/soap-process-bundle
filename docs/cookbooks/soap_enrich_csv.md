@@ -2,7 +2,7 @@ Enrich a CSV file with a SOAP service
 =====================================
 
 This recipe reads a CSV file of country codes, calls a SOAP method for each line, and writes the enriched lines to
-another CSV file. Lines for which the call fails are logged and skipped. It uses the public
+another CSV file. Lines for which the call fails, or whose country code is unknown, are logged and skipped. It uses the public
 [CountryInfoService](http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso) through the
 `country_info` client declared in the [client reference](../reference/client.md#examples).
 
@@ -12,6 +12,7 @@ Source file `var/data/countries.csv`:
 iso;label
 FR;Our label for France
 DE;Our label for Germany
+XX;Unknown code
 ```
 
 ```yaml
@@ -72,7 +73,22 @@ clever_age_process:
                                         code: '[sCapitalCity]'
                                     currency:
                                         code: '[sCurrencyISOCode]'
+                    outputs: [skip_unknown]
+
+                # An unknown code is not an error: the service answers "Country not found in the database"
+                skip_unknown:
+                    task: filter
+                    options:
+                        not_match:
+                            '[name]': 'Country not found in the database'
                     outputs: [write]
+                    error_outputs: [log_unknown]
+
+                log_unknown:
+                    task: logger
+                    options:
+                        level: warning
+                        message: 'Unknown country code, line skipped'
 
                 write:
                     task: csv_writer
@@ -98,6 +114,10 @@ How it works:
   converts it to an array ([cast](https://github.com/cleverage/process-bundle/blob/main/docs/reference/transformers/cast_transformer.md))
   and maps the columns to write with the
   [CsvWriterTask](https://github.com/cleverage/process-bundle/blob/main/docs/reference/tasks/csv_writer_task.md).
+- An unknown country code does not make the call fail: `FullCountryInfo` answers with the name
+  `Country not found in the database` and empty values. The
+  [FilterTask](https://github.com/cleverage/process-bundle/blob/main/docs/reference/tasks/filter_task.md) sends such a
+  line to its `error_outputs` (logged) instead of writing it.
 
 Note that the error output of the RequestTask is its input (the SOAP arguments), not the CSV line: the details of the
 failed call (options, last request and response) are in the log context of the `Soap call failed` error

@@ -1,6 +1,9 @@
 Latest
 ------
 
+### Changes
+* [#85](https://github.com/cleverage/soap-process-bundle/issues/85) Documentation: the `soap_enrich_csv` cookbook skips and logs the lines of unknown country codes, which do not make the SOAP call fail.
+
 v3.4
 ------
 
