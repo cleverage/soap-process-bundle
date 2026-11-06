@@ -66,7 +66,7 @@ class ClientTest extends TestCase
         self::assertStringContainsString('<ns1:GetBook>', (string) $client->getLastRequest());
         self::assertStringContainsString('<return xsi:type="xsd:string">It</return>', (string) $client->getLastResponse());
         // The trace is logged with the "trace" option
-        self::assertSame(["notice: Soap call 'GetBook' on 'http://soap.test/?wsdl'", "debug: Trace of soap call 'GetBook' on 'http://soap.test/?wsdl'"], $this->logs);
+        self::assertSame(["debug: Soap call 'GetBook' on 'http://soap.test/?wsdl'", "debug: Trace of soap call 'GetBook' on 'http://soap.test/?wsdl'"], $this->logs);
     }
 
     public function testSoapOptionsAndHeadersAreSent(): void
@@ -100,7 +100,7 @@ class ClientTest extends TestCase
         } catch (\SoapFault $e) {
             self::assertSame('Unknown method', $e->getMessage());
         }
-        self::assertSame("alert: Soap call 'Fail' on 'http://soap.test/?wsdl' failed : Unknown method", $this->logs[1]);
+        self::assertSame("error: Soap call 'Fail' on 'http://soap.test/?wsdl' failed : Unknown method", $this->logs[1]);
         self::assertStringContainsString('Unknown method', (string) $client->getLastResponse());
     }
 
@@ -130,7 +130,7 @@ class ClientTest extends TestCase
         self::assertSame('Book 1', $client->call('getBook', ['id' => 1]));
         // The SoapClient is initialized with the client options, and the call is logged before the override
         self::assertInstanceOf(\SoapClient::class, $client->getSoapClient());
-        self::assertSame(["notice: Soap call 'getBook' on ''"], $this->logs);
+        self::assertSame(["debug: Soap call 'getBook' on ''"], $this->logs);
     }
 
     public function testDoSoapCallWithoutSoapClient(): void

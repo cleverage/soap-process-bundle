@@ -142,8 +142,8 @@ Notes
 * The `trace` option is always forced to `true` when the `SoapClient` is created, so that the last request and
   response are always available (they are added to the log context of a failed call). Setting `trace: true` in
   `$options` additionally logs them at `debug` level after each successful call.
-* Each call is logged at `notice` level (`Soap call '<method>' on '<wsdl>'`), including the ones handled by a
-  `soapCall<Method>()` override. When the call fails with a `SoapFault`, the error is logged at `alert` level, with the
+* Each call is logged at `debug` level (`Soap call '<method>' on '<wsdl>'`), including the ones handled by a
+  `soapCall<Method>()` override. When the call fails with a `SoapFault`, the error is logged at `error` level, with the
   last request and response in the log context, then the `SoapFault` is thrown. With the `exceptions: false` option,
   `SoapClient` returns the `SoapFault` instead of throwing it: it is handled the same way.
 * The credentials are masked (`***`) in the logged requests and responses: the value of the HTTP headers (e.g.

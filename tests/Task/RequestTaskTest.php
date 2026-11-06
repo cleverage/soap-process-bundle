@@ -118,7 +118,7 @@ class RequestTaskTest extends TestCase
         }
 
         self::assertNull($state->getOutput());
-        $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level']));
+        $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level'] && 'Soap call failed' === $log['message']));
         self::assertCount(1, $errors);
         self::assertSame('Soap call failed', $errors[0]['message']);
         self::assertSame('Unknown method', $errors[0]['context']['message']);
@@ -146,7 +146,7 @@ class RequestTaskTest extends TestCase
 
         self::assertStringContainsString('SECRET-TOKEN', $this->soapClient->requests[0]);
         self::assertStringNotContainsString('SECRET', json_encode($this->logs, \JSON_THROW_ON_ERROR));
-        $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level']));
+        $errors = array_values(array_filter($this->logs, static fn (array $log): bool => 'error' === $log['level'] && 'Soap call failed' === $log['message']));
         self::assertIsArray($errors[0]['context']['options']);
         self::assertSame(['urn:demo AuthToken'], $errors[0]['context']['options']['soap_call_headers']);
         self::assertIsString($errors[0]['context']['last_request']);
