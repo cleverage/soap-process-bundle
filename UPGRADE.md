@@ -1,6 +1,13 @@
 Upgrade Guide
 =============
 
+## Latest
+
+### Log levels of the client
+
+The `Client` logs each call at `debug` level (was `notice`) and a failed call at `error` level (was `alert`): adapt a log
+handler or an alerting that relied on these levels.
+
 ## v3.4
 
 ### `RequestTransformer` service

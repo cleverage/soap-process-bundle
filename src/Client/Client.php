@@ -170,7 +170,7 @@ class Client implements ClientInterface
     {
         $this->initializeSoapClient();
 
-        $this->getLogger()->notice(
+        $this->getLogger()->debug(
             \sprintf("Soap call '%s' on '%s'", $method, $this->getWsdl())
         );
 
@@ -200,7 +200,7 @@ class Client implements ClientInterface
             }
         } catch (\SoapFault $e) {
             $this->getLastRequestTrace();
-            $this->getLogger()->alert(
+            $this->getLogger()->error(
                 \sprintf("Soap call '%s' on '%s' failed : %s", $method, $this->getWsdl(), $e->getMessage()),
                 SensitiveDataMasker::maskTrace($this->getLastRequestTraceArray())
             );
