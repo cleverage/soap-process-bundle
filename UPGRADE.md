@@ -1,7 +1,7 @@
 Upgrade Guide
 =============
 
-## Latest
+## v3.5
 
 ### Log levels of the client
 

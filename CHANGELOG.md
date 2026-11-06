@@ -1,6 +1,9 @@
 Latest
 ------
 
+v3.5
+------
+
 ### Changes
 * [#87](https://github.com/cleverage/soap-process-bundle/issues/87) `Client`: each call is logged at `debug` level instead of `notice`, a failed call (`SoapFault`) at `error` level instead of `alert`, as the `RequestTask` and the REST client. Update documentation and tests.
 * [#85](https://github.com/cleverage/soap-process-bundle/issues/85) Documentation: the `soap_enrich_csv` cookbook skips and logs the lines of unknown country codes, which do not make the SOAP call fail.
